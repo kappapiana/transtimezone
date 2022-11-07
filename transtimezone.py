@@ -12,15 +12,15 @@ def parsedate(year, time="00:00"):
     returns a datetime object (todo)
     '''
 
-        if time != "00:00":
-            year, month, day = [int(element) for element in year.split('-')]
-            hour, minutes = [int(element) for element in time.split(':')]
-        else:
-            year, month, day = [int(element) for element in input_day.split('-')]
-            hour = 00
-            minutes = 00
+    if time != "00:00":
+        year, month, day = [int(element) for element in year.split('-')]
+        hour, minutes = [int(element) for element in time.split(':')]
+    else:
+        year, month, day = [int(element) for element in input_day.split('-')]
+        hour = 00
+        minutes = 00
 
-        return datetime.datetime(year, month, day, hour, minutes)
+    return datetime.datetime(year, month, day, hour, minutes)
 
     print(f"the date you entered is {year}\nand the time is {time}")
 
@@ -43,6 +43,9 @@ if args.date is None:
     date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
     input_day, input_hour = [element for element in date]
 
+else:
+    from_date = parsedate(args.date, args.time)
+
 
 if args.timezone is None:
 
@@ -51,7 +54,7 @@ if args.timezone is None:
 else:
     tz = pytz.timezone(args.timezone)
 
-from_date = datetime.datetime(year, month, day, hour, minutes)
+
 
 
 print("Current Time:", from_date.strftime("%Y-%m-%d %H:%M:%S %Z %z"))
