@@ -6,11 +6,21 @@ import datetime
 import argparse
 
 
-def parsedate(year, time):
+def parsedate(year, time="00:00"):
     '''
     parses the provided date and transforms it to date elements
     returns a datetime object (todo)
     '''
+
+        if time != "00:00":
+            year, month, day = [int(element) for element in year.split('-')]
+            hour, minutes = [int(element) for element in time.split(':')]
+        else:
+            year, month, day = [int(element) for element in input_day.split('-')]
+            hour = 00
+            minutes = 00
+
+        return datetime.datetime(year, month, day, hour, minutes)
 
     print(f"the date you entered is {year}\nand the time is {time}")
 
@@ -31,16 +41,8 @@ if args.date is None:
     print("No date has been entered")
 
     date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+    input_day, input_hour = [element for element in date]
 
-    if len(date) == 2:
-        input_day, input_hour = [element for element in date]
-        year, month, day = [int(element) for element in input_day.split('-')]
-        hour, minutes = [int(element) for element in input_hour.split(':')]
-    else:
-        input_day = date[0]
-        year, month, day = [int(element) for element in input_day.split('-')]
-        hour = 00
-        minutes = 00
 
 if args.timezone is None:
 
