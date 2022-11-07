@@ -6,8 +6,13 @@ import datetime
 import argparse
 
 
-def parsedate(year, date):
-    print(f"date is {date}")
+def parsedate(year, time):
+    '''
+    parses the provided date and transforms it to date elements
+    returns a datetime object (todo)
+    '''
+
+    print(f"the date you entered is {year}\nand the time is {time}")
 
 
 parser = argparse.ArgumentParser()
@@ -17,6 +22,9 @@ parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you 
 args = parser.parse_args()
 
 print(args.date, args.time, args.timezone)
+
+# parsedate(args.date, args.time)
+# TODO: transform the logic here below in function, to be reused with parsed arguments if provided.
 
 if args.date == None :
     print("No date has been entered")
