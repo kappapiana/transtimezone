@@ -3,24 +3,51 @@
 # import datetime
 import pytz
 import datetime
+import argparse
 
-date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
-print(date)
 
-if len(date) == 2:
-    print("lunga")
-    input_day, input_hour = [element for element in date]
-    input_day_elements = input_day.split('-')
-    input_hour_elements = input_hour.split(':')
+def parsedate(year, date):
+    print(f"date is {date}")
 
-    year, month, day = [int(element) for element in input_day_elements]
-    hour, minutes = [int(element) for element in input_hour_elements]
+
+parser = argparse.ArgumentParser()
+parser.add_argument("date", type=str, nargs="?", help="The date in YYYY-MM-DD format")
+parser.add_argument("time", type=str, nargs="?", default="00:00", help="The time in HH:MM format (if not provided, defaults to 00:00)")
+parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know what it is")
+args = parser.parse_args()
+
+print(args.date, args.time, args.timezone)
+
+if args.date == None :
+    print("No date has been entered")
+
+    date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+    print(date)
+
+    if len(date) == 2:
+        print("lunga")
+        input_day, input_hour = [element for element in date]
+        input_day_elements = input_day.split('-')
+        input_hour_elements = input_hour.split(':')
+
+        year, month, day = [int(element) for element in input_day_elements]
+        hour, minutes = [int(element) for element in input_hour_elements]
+    else:
+        print(date)
+        input_day = date[0]
+        print(input_day)
+        input_day_elements = input_day.split('-')
+
+        year, month, day = [int(element) for element in input_day_elements]
+        hour = 00
+        minutes = 00
+
+if args.timezone == None :
+
+    input_tz = input('enter the timezone, if unsure, leave blank :> ')
+    tz = pytz.timezone(input_tz)
 else:
-    print("breve")
-
-input_tz = input('enter the timezone, if unsure, leave blank :> ')
-
-tz = pytz.timezone(input_tz)
+    tz = pytz.timezone(args.timezone)
 
 from_date = datetime.datetime(year, month, day, hour, minutes)
 
