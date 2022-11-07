@@ -24,33 +24,25 @@ args = parser.parse_args()
 print(args.date, args.time, args.timezone)
 
 # parsedate(args.date, args.time)
-# TODO: transform the logic here below in function, to be reused with parsed arguments if provided.
+# TODO: transform the logic here below in function,
+# to be reused with parsed arguments if provided.
 
-if args.date == None :
+if args.date is None:
     print("No date has been entered")
 
     date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
-    print(date)
 
     if len(date) == 2:
-        print("lunga")
         input_day, input_hour = [element for element in date]
-        input_day_elements = input_day.split('-')
-        input_hour_elements = input_hour.split(':')
-
-        year, month, day = [int(element) for element in input_day_elements]
-        hour, minutes = [int(element) for element in input_hour_elements]
+        year, month, day = [int(element) for element in input_day.split('-')]
+        hour, minutes = [int(element) for element in input_hour.split(':')]
     else:
-        print(date)
         input_day = date[0]
-        print(input_day)
-        input_day_elements = input_day.split('-')
-
-        year, month, day = [int(element) for element in input_day_elements]
+        year, month, day = [int(element) for element in input_day.split('-')]
         hour = 00
         minutes = 00
 
-if args.timezone == None :
+if args.timezone is None:
 
     input_tz = input('enter the timezone, if unsure, leave blank :> ')
     tz = pytz.timezone(input_tz)
@@ -67,7 +59,11 @@ localized_from_date = tz.localize(from_date)
 print("Current Time:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z %z"))
 
 
-translates_to = {"UTC": "Universal Coordinated Time", "CET": "Central European Time", "America/New_York": "New York Time", "America/Los_Angeles": "Los Angeles Time"}
+translates_to = {"UTC": "Universal Coordinated Time",
+                 "CET": "Central European Time",
+                 "America/New_York": "New York Time",
+                 "America/Los_Angeles": "Los Angeles Time",
+                 "Cuba": "Cuba time"}
 
 for timezone, timename in translates_to.items():
 
