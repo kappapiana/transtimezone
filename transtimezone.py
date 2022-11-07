@@ -12,13 +12,8 @@ def parsedate(year, time="00:00"):
     returns a datetime object (todo)
     '''
 
-    if time != "00:00":
-        year, month, day = [int(element) for element in year.split('-')]
-        hour, minutes = [int(element) for element in time.split(':')]
-    else:
-        year, month, day = [int(element) for element in input_day.split('-')]
-        hour = 00
-        minutes = 00
+    year, month, day = [int(element) for element in year.split('-')]
+    hour, minutes = [int(element) for element in time.split(':')]
 
     return datetime.datetime(year, month, day, hour, minutes)
 
@@ -40,8 +35,13 @@ print(args.date, args.time, args.timezone)
 if args.date is None:
     print("No date has been entered")
 
+    input_hour = "00:00"
     date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
-    input_day, input_hour = [element for element in date]
+    input_day = date[0]
+    if len(date) == 2:
+        input_hour = date[1]
+    elif len(date) < 2 :
+        print(f"you have entered only {len(date)} elements\nwe use midnight")
     from_date = parsedate(input_day, input_hour)
 
 else:
@@ -55,14 +55,9 @@ if args.timezone is None:
 else:
     tz = pytz.timezone(args.timezone)
 
-
-
-
-print("Current Time:", from_date.strftime("%Y-%m-%d %H:%M:%S %Z %z"))
-
-
 localized_from_date = tz.localize(from_date)
-print("Current Time:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z %z"))
+print("Entered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
+print(f"+----------------------------------------------------------------------------+")
 
 
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -74,8 +69,10 @@ translates_to = {"UTC": "Universal Coordinated Time",
 for timezone, timename in translates_to.items():
 
     translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
-    print(timename, ":", translated_to.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
+    time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z (%z)")
+    print(f"| {timename :<32} {time_true :42}|")
 
+print(f"+----------------------------------------------------------------------------+")
 # convert UTC timezone to 'US/Central'
 
 
