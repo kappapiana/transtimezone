@@ -42,6 +42,7 @@ if args.date is None:
 
     date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
     input_day, input_hour = [element for element in date]
+    from_date = parsedate(input_day, input_hour)
 
 else:
     from_date = parsedate(args.date, args.time)
