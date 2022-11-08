@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-# import datetime
+# SPDX-FileCopyrightText: Carlo Piana
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import pytz
 import datetime
 import argparse
