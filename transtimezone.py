@@ -20,8 +20,6 @@ def parsedate(year, time="00:00"):
 
     return datetime.datetime(year, month, day, hour, minutes)
 
-    print(f"the date you entered is {year}\nand the time is {time}")
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument("date", type=str, nargs="?", help="The date in YYYY-MM-DD format")
@@ -30,10 +28,6 @@ parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you 
 args = parser.parse_args()
 
 print(args.date, args.time, args.timezone)
-
-# parsedate(args.date, args.time)
-# TODO: transform the logic here below in function,
-# to be reused with parsed arguments if provided.
 
 if args.date is None:
     print("No date has been entered")
@@ -73,7 +67,7 @@ for timezone, timename in translates_to.items():
 
     translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
     time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z (%z)")
-    print(f"| {timename :<32} {time_true :42}|")
+    print(f"| {timename + ':':<32} {time_true :42}|")
 
 print(f"+----------------------------------------------------------------------------+")
 # convert UTC timezone to 'US/Central'
