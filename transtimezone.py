@@ -9,12 +9,12 @@ import datetime
 import argparse
 
 
-def parsedate(year, time="00:00"):
+def parsedate(get_date, get_time="00:00"):
     """ parses the provided date and transforms it to date elements
     returns a datetime object (todo) """
 
-    year, month, day = [int(element) for element in year.split('-')]
-    hour, minutes = [int(element) for element in time.split(':')]
+    year, month, day = [int(element) for element in get_date.split('-')]
+    hour, minutes = [int(element) for element in get_time.split(':')]
 
     return datetime.datetime(year, month, day, hour, minutes)
 
