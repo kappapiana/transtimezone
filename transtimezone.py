@@ -7,7 +7,6 @@
 import pytz
 import datetime
 import argparse
-import six
 
 
 def parsedate(year, time="00:00"):
@@ -67,8 +66,13 @@ else:
 
 if args.timezone is None:
 
-    input_tz = input('enter the timezone, if unsure, leave blank :> ')
-    tz = pytz.timezone(input_tz)
+    try:
+        input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use the system one :> ')
+        tz = pytz.timezone(input_tz)
+    except:
+        tz = pytz.timezone(datetime.datetime.now().astimezone().tzname())
+        print(f"\n*** no date is provided, we are using the current system one, {tz} ***\n")
+
 else:
     tz = pytz.timezone(args.timezone)
 
