@@ -30,7 +30,7 @@ $ ./transtimezone.py 2022-10-28 10:00 -t CET
 ```
 
 If you omit any parameter, the program will ask to enter the date and time
-string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH-MM`.
+string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 
 At the end, you will have a list of times
 
