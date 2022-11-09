@@ -71,7 +71,7 @@ if args.timezone is None:
         tz = pytz.timezone(input_tz)
     except:
         tz = pytz.timezone(datetime.datetime.now().astimezone().tzname())
-        print(f"\n*** no date is provided, we are using the current system one, {tz} ***\n")
+        print(f"\n*** no time zone is provided, we are using the current system one, {tz} ***\n")
 
 else:
     tz = pytz.timezone(args.timezone)
