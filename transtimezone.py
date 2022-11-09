@@ -49,7 +49,7 @@ parser.add_argument("date", type=str, nargs="?",
 parser.add_argument("time", type=str, nargs="?", default="00:00",
                     help="The time in HH:MM format (if not provided, \
                     defaults to 00:00)")
-parser.add_argument("-t", type=str, help="Add the timezone if you know \
+parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know \
                     what it is")
 args = parser.parse_args()
 
@@ -68,8 +68,7 @@ else:
 if args.timezone is None:
 
     try:
-        input_tz = input('\nenter the timezone, if unsure, leave blank,  \
-                         we\'ll use the system one :> ')
+        input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use the system one :> ')
         tz = pytz.timezone(input_tz)
     except:
         tz = pytz.timezone(datetime.datetime.now().astimezone().tzname())
