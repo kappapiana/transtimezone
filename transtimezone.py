@@ -7,18 +7,41 @@
 import pytz
 import datetime
 import argparse
+import six
 
 
 def parsedate(year, time="00:00"):
-    '''
-    parses the provided date and transforms it to date elements
-    returns a datetime object (todo)
-    '''
+    """ parses the provided date and transforms it to date elements
+    returns a datetime object (todo) """
+
 
     year, month, day = [int(element) for element in year.split('-')]
     hour, minutes = [int(element) for element in time.split(':')]
 
     return datetime.datetime(year, month, day, hour, minutes)
+
+
+def typedate():
+    """function to enter manually (not from CLI)"""
+
+    input_hour = "00:00" # sets default date
+
+    while True: # goes on until the dummy gets it right
+        date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+
+        input_day = date[0]
+        if len(date) == 2:
+            input_hour = date[1]
+        elif len(date) < 2 :
+            print(f"you have entered only {len(date)} elements\nwe use midnight")
+
+        try:
+            input_date = parsedate(input_day, input_hour)
+            break
+        except:
+            print(f"you have entered a wrong data, see the reference it must be YYYY-MM-DD HH:MM" )
+
+    return input_date
 
 
 parser = argparse.ArgumentParser()
@@ -29,18 +52,17 @@ args = parser.parse_args()
 
 if args.date is None:
     print("No date has been entered")
-
-    input_hour = "00:00"
-    date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
-    input_day = date[0]
-    if len(date) == 2:
-        input_hour = date[1]
-    elif len(date) < 2 :
-        print(f"you have entered only {len(date)} elements\nwe use midnight")
-    from_date = parsedate(input_day, input_hour)
+    from_date = typedate()
 
 else:
-    from_date = parsedate(args.date, args.time)
+    while True:
+        try:
+            from_date = parsedate(args.date, args.time)
+            break
+        except:
+            print(f"You have entered a wrong data, see the reference it must be YYYY-MM-DD HH:MM" )
+            from_date = typedate()
+            break
 
 
 if args.timezone is None:
