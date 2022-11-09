@@ -97,8 +97,3 @@ for timezone, timename in translates_to.items():
     print(f"| {timename + ':':<32} {time_true :42}|")
 
 print(f"+----------------------------------------------------------------------------+")
-# convert UTC timezone to 'US/Central'
-
-
-
-# print(pytz.all_timezones)
