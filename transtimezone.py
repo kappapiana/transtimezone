@@ -27,8 +27,6 @@ parser.add_argument("time", type=str, nargs="?", default="00:00", help="The time
 parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know what it is")
 args = parser.parse_args()
 
-print(args.date, args.time, args.timezone)
-
 if args.date is None:
     print("No date has been entered")
 
@@ -61,7 +59,10 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
-                 "Cuba": "Cuba time"}
+                 "Cuba": "Cuba time",
+                 "Zulu": "Zulu time (or US Navy Time)",
+                 "Australia/Sydney": "Sydney Time",
+                 "Asia/Tokyo": "Tokyo (Japan) Time"}
 
 for timezone, timename in translates_to.items():
 
