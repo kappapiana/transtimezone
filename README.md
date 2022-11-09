@@ -29,6 +29,10 @@ $ ./transtimezone.py 2022-10-28 10:00 -t CET
 
 ```
 
+If you just want to use your current one, omit the flag and avoid entering
+anything when prompted: the script will use the local timezone as obtained from
+the system.
+
 If you omit any parameter, the program will ask to enter the date and time
 string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 
