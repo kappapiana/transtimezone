@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 Carlo Piana
 SPDX-License-Identifier: CC0-1.0
 -->
 
+[![REUSE status](https://api.reuse.software/badge/github.com/kappapiana/transtimezone)](https://api.reuse.software/info/github.com/kappapiana/transtimezone)
+
 # transtimezone
 
 Quick translate times between timezones
