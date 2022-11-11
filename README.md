@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Carlo Piana
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # transtimezone
 
 Quick translate times between timezones
