@@ -79,7 +79,7 @@ else:
     tz = pytz.timezone(args.timezone)
 
 localized_from_date = tz.localize(from_date)
-print("Entered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
+print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
 
 translates_to = {"UTC": "Universal Coordinated Time - UTC",
