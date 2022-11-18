@@ -82,7 +82,7 @@ localized_from_date = tz.localize(from_date)
 print("Entered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
 
-translates_to = {"UTC": "Universal Coordinated Time",
+translates_to = {"UTC": "Universal Coordinated Time - UTC",
                  "CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
@@ -98,6 +98,6 @@ for timezone, timename in translates_to.items():
     translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
     time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
     zone_true = translated_to.strftime("(%z)")
-    print(f"| {timename + ':':<32} {time_true:<25} {zone_true :16}|")
+    print(f"| {timename + ':':<35} {time_true:<25} {zone_true :13}|")
 
 print("+----------------------------------------------------------------------------+")
