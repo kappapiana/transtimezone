@@ -88,12 +88,14 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Cuba": "Cuba time",
                  "Zulu": "Zulu time (or US Navy Time)",
                  "Australia/Sydney": "Sydney Time",
-                 "Asia/Tokyo": "Tokyo (Japan) Time"}
+                 "Asia/Tokyo": "Tokyo (Japan) Time",
+		 "Asia/Dubai": "Dubai (Gulf) time"}
 
 for timezone, timename in translates_to.items():
 
     translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
-    time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z (%z)")
-    print(f"| {timename + ':':<32} {time_true :42}|")
+    time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+    zone_true = translated_to.strftime("(%z)")
+    print(f"| {timename + ':':<32} {time_true:<25} {zone_true :16}|")
 
 print(f"+----------------------------------------------------------------------------+")
