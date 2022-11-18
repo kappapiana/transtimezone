@@ -19,7 +19,7 @@ not the default option), it is gracious to at least announce the local time for
 some countries/cities. The one provided here are only an example.
 
 With this script you can enter a sensible date and have multiple dates in
-different timezone.
+different timezones.
 
 You can enter the date directly in the CLI:
 
