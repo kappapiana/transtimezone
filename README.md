@@ -47,17 +47,19 @@ string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 At the end, you will have a list of times
 
 ```shell
-Entered Time is: 2022:10:28 10:00:00 CEST (+0200)
+Entered Time is: 2022:11:22 11:00:00 EST (-0500)
 +----------------------------------------------------------------------------+
-| Universal Coordinated Time:      2022:10:28 08:00:00 UTC (+0000)           |
-| Central European Time:           2022:10:28 10:00:00 CEST (+0200)          |
-| New York Time:                   2022:10:28 04:00:00 EDT (-0400)           |
-| Los Angeles Time:                2022:10:28 01:00:00 PDT (-0700)           |
-| Cuba time:                       2022:10:28 04:00:00 CDT (-0400)           |
-| Zulu time (or US Navy Time):     2022:10:28 08:00:00 UTC (+0000)           |
-| Sydney Time:                     2022:10:28 19:00:00 AEDT (+1100)          |
-| Tokyo (Japan) Time:              2022:10:28 17:00:00 JST (+0900)           |
+| Universal Coordinated Time:      2022:11:22 16:00:00 UTC   (+0000)         |
+| Central European Time:           2022:11:22 17:00:00 CET   (+0100)         |
+| New York Time:                   2022:11:22 11:00:00 EST   (-0500)         |
+| Los Angeles Time:                2022:11:22 08:00:00 PST   (-0800)         |
+| Cuba time:                       2022:11:22 11:00:00 CST   (-0500)         |
+| Zulu time (or US Navy Time):     2022:11:22 16:00:00 UTC   (+0000)         |
+| Sydney Time:                     2022:11:23 03:00:00 AEDT  (+1100)         |
+| Tokyo (Japan) Time:              2022:11:23 01:00:00 JST   (+0900)         |
+| Dubai (Gulf) time:               2022:11:22 20:00:00 +04   (+0400)         |
 +----------------------------------------------------------------------------+
+
 ```
 
 TODO: provide the option to add one or more timezones, maybe from a list, as the
