@@ -46,7 +46,7 @@ string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 
 At the end, you will have a list of times
 
-```shell
+```
 Entered Time is: 2022:11:22 11:00:00 EST (-0500)
 +----------------------------------------------------------------------------+
 | Universal Coordinated Time:      2022:11:22 16:00:00 UTC   (+0000)         |
