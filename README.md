@@ -21,7 +21,8 @@ some countries/cities. The one provided here are only an example.
 With this script you can enter a sensible date and have multiple dates in
 different timezones.
 
-You can enter the date directly in the CLI:
+You can enter the date directly in the CLI, using the `YYYY-MM-DD` convention (as
+you always should):
 
 ```shell
 $ ./transtimezone.py 2022-10-28 10:00
