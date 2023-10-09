@@ -8,6 +8,17 @@ import pytz
 import datetime
 import argparse
 
+# Define the most relevant timezones
+translates_to = {"UTC": "Universal Coordinated Time",
+                 "CET": "Central European Time",
+                 "America/New_York": "New York Time",
+                 "America/Los_Angeles": "Los Angeles Time",
+                 "Cuba": "Cuba time",
+                 "Zulu": "Zulu time (or US Navy Time)",
+                 "Australia/Sydney": "Sydney Time",
+                 "Asia/Tokyo": "Tokyo (Japan) Time"}
+
+
 
 def parsedate(get_date, get_time="00:00"):
     """ parses the provided date and transforms it to date elements
@@ -66,14 +77,25 @@ else:
         from_date = typedate()
 
 if args.timezone is None:
-
-    try:
-        input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use the system one :> ')
-        tz = pytz.timezone(input_tz)
-    except:
-        tz = pytz.timezone(datetime.datetime.now().astimezone().tzname())
-        print(f"\n*** no time zone is provided, "
-              f"we are using the current system one, {tz} ***\n")
+    
+    count = 0 # We need a counter
+    while True: # Cycle until counter is met
+        try:
+            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use the system one :> ')
+            tz = pytz.timezone(input_tz)
+            break
+        except:
+            if count < 2 : # Ask Three Time then quit.
+                tz = pytz.timezone("UTC")
+                print(f"\n*** no time zone is provided *** "
+                    f"please use a valid one, such as:\n")
+                for timezone, timename in translates_to.items():
+                    print(f"- {timezone}, ({timename})")
+                count = count + 1
+            else:
+                print(f"\nNo valid timezone has been provided")
+                print(f"after 3 times. We are using ***UTC***\n")
+                break
 
 else:
     tz = pytz.timezone(args.timezone)
@@ -82,15 +104,6 @@ localized_from_date = tz.localize(from_date)
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
 
-translates_to = {"UTC": "Universal Coordinated Time - UTC",
-                 "CET": "Central European Time",
-                 "America/New_York": "New York Time",
-                 "America/Los_Angeles": "Los Angeles Time",
-                 "Cuba": "Cuba time",
-                 "Zulu": "Zulu time (or US Navy Time)",
-                 "Australia/Sydney": "Sydney Time",
-                 "Asia/Tokyo": "Tokyo (Japan) Time",
-		 "Asia/Dubai": "Dubai (Gulf) time"}
 
 print("+----------------------------------------------------------------------------+")
 for timezone, timename in translates_to.items():
