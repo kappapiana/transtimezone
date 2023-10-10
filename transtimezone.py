@@ -7,6 +7,7 @@
 import pytz
 import datetime
 import argparse
+import numpy as np
 
 # Define the most relevant timezones
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -16,7 +17,10 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Cuba": "Cuba time",
                  "Zulu": "Zulu time (or US Navy Time)",
                  "Australia/Sydney": "Sydney Time",
-                 "Asia/Tokyo": "Tokyo (Japan) Time"}
+                 "Asia/Tokyo": "Tokyo (Japan) Time",
+                 "Europe/London": "London time, (GMT or BST)"}
+
+timezoneList = np.loadtxt('tz.asc', dtype="str", delimiter="\n")
 
 
 
