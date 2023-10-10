@@ -7,7 +7,7 @@
 import pytz
 import datetime
 import argparse
-import numpy as np
+import re
 
 # Define the most relevant timezones
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -20,8 +20,17 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
 
-timezoneList = np.loadtxt('tz.asc', dtype="str", delimiter="\n")
+def regmatch(input):
+    ''' searches for a partial match in the file of
+    cities and proposes the ones relevant'''
 
+    pattern = r'.*'+input+'.*'
+
+    with open("tz.asc") as f: 
+        find = re.findall(pattern, f.read(), re.IGNORECASE)
+    
+    for i in find:
+        print(i)
 
 
 def parsedate(get_date, get_time="00:00"):
@@ -90,19 +99,28 @@ if args.timezone is None:
             break
         except:
             if count < 2 : # Ask Three Time then quit.
-                tz = pytz.timezone("UTC")
-                print(f"\n*** no time zone is provided *** "
-                    f"please use a valid one, such as:\n")
-                for timezone, timename in translates_to.items():
-                    print(f"- {timezone}, ({timename})")
+                if input_tz == "":
+                    print(f"\n*** no valid time zone is provided *** "
+                        f"please use a valid one, such as:\n")
+                    for timezone, timename in translates_to.items():
+                        print(f"- {timezone}, ({timename})")
+                else:
+                    print(f"You have written {input_tz}, do you mean one of the following?")
+                    regmatch(input_tz)
+
                 count = count + 1
             else:
+                tz = pytz.timezone("UTC")
                 print(f"\nNo valid timezone has been provided")
                 print(f"after 3 times. We are using ***UTC***\n")
                 break
 
 else:
-    tz = pytz.timezone(args.timezone)
+    try: 
+        tz = pytz.timezone(args.timezone)
+    except:
+        print("boom")
+        exit("shit")
 
 localized_from_date = tz.localize(from_date)
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
