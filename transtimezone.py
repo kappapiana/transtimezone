@@ -32,6 +32,33 @@ def regmatch(input):
     for i in find:
         print(i)
 
+def asker():
+    count = 0 # We need a counter
+    while True: # Cycle until counter is met
+        try:
+            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+            tz = pytz.timezone(input_tz)
+            return tz
+            break
+        except:
+            if count < 2 : # Ask Three Time then quit.
+                if input_tz == "":
+                    print(f"\n*** no valid time zone is provided *** "
+                        f"please use a valid one, such as:\n")
+                    for timezone, timename in translates_to.items():
+                        print(f"- {timezone}, ({timename})")
+                else:
+                    print(f"You have written {input_tz}, do you mean one of the following?")
+                    regmatch(input_tz)
+
+                count = count + 1
+            else:
+                tz = pytz.timezone("UTC")
+                print(f"\nNo valid timezone has been provided")
+                print(f"after 3 times. We are using ***UTC***\n")
+                return tz
+                break
+    print(tz)
 
 def parsedate(get_date, get_time="00:00"):
     """ parses the provided date and transforms it to date elements
@@ -90,37 +117,13 @@ else:
         from_date = typedate()
 
 if args.timezone is None:
-    
-    count = 0 # We need a counter
-    while True: # Cycle until counter is met
-        try:
-            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use the system one :> ')
-            tz = pytz.timezone(input_tz)
-            break
-        except:
-            if count < 2 : # Ask Three Time then quit.
-                if input_tz == "":
-                    print(f"\n*** no valid time zone is provided *** "
-                        f"please use a valid one, such as:\n")
-                    for timezone, timename in translates_to.items():
-                        print(f"- {timezone}, ({timename})")
-                else:
-                    print(f"You have written {input_tz}, do you mean one of the following?")
-                    regmatch(input_tz)
-
-                count = count + 1
-            else:
-                tz = pytz.timezone("UTC")
-                print(f"\nNo valid timezone has been provided")
-                print(f"after 3 times. We are using ***UTC***\n")
-                break
+    tz = asker()
 
 else:
     try: 
         tz = pytz.timezone(args.timezone)
     except:
-        print("boom")
-        exit("shit")
+        tz = asker()
 
 localized_from_date = tz.localize(from_date)
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
