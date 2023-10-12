@@ -128,7 +128,7 @@ else:
 localized_from_date = tz.localize(from_date)
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
-if args.tozone is not None: 
+if args.tozone: 
     try: 
         translated_to = localized_from_date.astimezone(pytz.timezone(args.tozone))
         time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
@@ -138,7 +138,7 @@ if args.tozone is not None:
 
         print("+---------------------------Other Times--------------------------------------+")
     except:
-        timezone_to = str(asker())
+        timezone_to = str(asker()) #use the asking function
         translated_to = localized_from_date.astimezone(pytz.timezone(timezone_to))
         time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
         zone_true = translated_to.strftime("(%z)")
