@@ -143,12 +143,16 @@ if args.tozone is not None:
         time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
         zone_true = translated_to.strftime("(%z)")
         print("\n+--------------------------selected Time-------------------------------------+")
-        print(f"|\n| Translates To {timezone_to + ':':<21} {time_true:<25} {zone_true :13}|\n|")
-
+        print(f"| {'':<75}|")
+        print(f"| Translates To {timezone_to + ':':<21} {time_true:<25} {zone_true :13}|")
+        print(f"| {'':<75}|")
         print("+---------------------------Other Times--------------------------------------+")
     
 else:
     print("+----------------------------------------------------------------------------+")
+    print(f"| {'':<75}|")
+    print("| If these times do not provide the desidered timezone, try -o [timezone to] |")
+    print(f"| {'':<75}|")
 
 for timezone, timename in translates_to.items():
 
