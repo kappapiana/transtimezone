@@ -62,6 +62,5 @@ Entered Time is: 2022:11:22 11:00:00 EST (-0500)
 +----------------------------------------------------------------------------+
 
 ```
-
-TODO: provide the option to add one or more timezones, maybe from a list, as the
-corresponding BASH script currently allows
+You have the option to request a specific timezone to which the date is translated
+in addition to the default ones. Just enter it with the `-o` flag 
