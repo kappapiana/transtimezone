@@ -4,6 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from datetime import datetime as dt
 import pytz
 import datetime
 import argparse
@@ -17,6 +18,10 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Australia/Sydney": "Sydney Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
+
+current_utc = dt.now(pytz.timezone('UTC'))  
+print(current_utc)
+
 
 def regmatch(input):
     ''' searches for a partial match in the file of
@@ -106,7 +111,9 @@ args = parser.parse_args()
 
 if args.date is None:
     print("No date has been entered")
-    from_date = typedate()
+    from_date = current_utc 
+    date_empty = True
+    tz = str('UTC')
 
 else:
     try:
@@ -116,16 +123,21 @@ else:
               "it must be YYYY-MM-DD HH:MM")
         from_date = typedate()
 
-if args.timezone is None:
-    tz = asker()
+if date_empty is True:
+    pass
 
 else:
-    try: 
-        tz = pytz.timezone(args.timezone)
-    except:
+    if args.timezone is None:
         tz = asker()
 
-localized_from_date = tz.localize(from_date)
+    else:
+        try: 
+            tz = pytz.timezone(args.timezone)
+        except:
+            tz = asker()
+
+    localized_from_date = tz.localize(from_date)
+
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
 if args.tozone: 
