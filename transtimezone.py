@@ -14,8 +14,6 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
-                 "Cuba": "Cuba time",
-                 "Zulu": "Zulu time (or US Navy Time)",
                  "Australia/Sydney": "Sydney Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
@@ -102,6 +100,8 @@ parser.add_argument("time", type=str, nargs="?", default="00:00",
                     defaults to 00:00)")
 parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know \
                     what it is")
+parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you know \
+                    what it is")
 args = parser.parse_args()
 
 if args.date is None:
@@ -128,9 +128,28 @@ else:
 localized_from_date = tz.localize(from_date)
 print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
 
+if args.tozone is not None: 
+    try: 
+        translated_to = localized_from_date.astimezone(pytz.timezone(args.tozone))
+        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        zone_true = translated_to.strftime("(%z)")
+        print("\n+--------------------------selected Time-------------------------------------+")
+        print(f"|\n| Translates To {args.tozone + ':':<21} {time_true:<25} {zone_true :13}|\n|")
 
+        print("+---------------------------Other Times--------------------------------------+")
+    except:
+        timezone_to = str(asker())
+        translated_to = localized_from_date.astimezone(pytz.timezone(timezone_to))
+        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        zone_true = translated_to.strftime("(%z)")
+        print("\n+--------------------------selected Time-------------------------------------+")
+        print(f"|\n| Translates To {timezone_to + ':':<21} {time_true:<25} {zone_true :13}|\n|")
 
-print("+----------------------------------------------------------------------------+")
+        print("+---------------------------Other Times--------------------------------------+")
+    
+else:
+    print("+----------------------------------------------------------------------------+")
+
 for timezone, timename in translates_to.items():
 
     translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
