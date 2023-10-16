@@ -37,20 +37,30 @@ class DateExtractor:
             return utc_date 
         except:
             print("nothing to do")   
-            
-    def extract_stringtime(self):
-        """A method to extract a date and time string for no particular reason"""
 
-        extracted_date = datetime.date(self.utc_date)
-        extracted_time = datetime.time(self.utc_date)
+def asker():
+    try:
+        input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+        tz = timezone(input_tz)
+        return tz
+    except:
+        print("error asker")
 
+def checkTimezone():
+
+    if args.timezone:
         try: 
-            string_time = str(f"{extracted_date} {extracted_time} {self.timezone}")
-        except:
-            print("bugger")
+            tz = timezone(args.timezone)
+        except: 
+            print(f"{args.timezone} is not valid")
+            try:
+                tz = (asker())
+            except:
+                print("we quit")
+    else: 
+        tz = timezone(asker())
 
-        return string_time
-
+    return tz
 
 # Parser from commandline:
 
@@ -66,6 +76,7 @@ parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you kn
                     what it is")
 args = parser.parse_args()
 
+
 def main():
 
     if args.date is None:
@@ -73,9 +84,14 @@ def main():
         date_utc = DateExtractor.pass_dataobject(date_system)
         print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
 
-    else: 
-        pass
+    else:
+        tz = checkTimezone()
+
+    print(tz)
+
+
     
+# Main function:
 
 if __name__ == '__main__':
     main() 
