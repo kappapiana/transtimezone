@@ -13,6 +13,7 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
 
+
 class DateExtractor:
     def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz="UTC"):
         self.date_time_string = date_time_string
@@ -32,16 +33,16 @@ class DateExtractor:
         try:
             localized_date = self.timezone.localize(self.date_obj)
             utc_date = localized_date.astimezone(self.utc_tz)
+            self.utc_tz = utc_date
             return utc_date 
         except:
             print("nothing to do")   
             
-
     def extract_stringtime(self):
         """A method to extract a date and time string for no particular reason"""
 
-        extracted_date = datetime.date(self.date_obj)
-        extracted_time = datetime.time(self.date_obj)
+        extracted_date = datetime.date(self.utc_date)
+        extracted_time = datetime.time(self.utc_date)
 
         try: 
             string_time = str(f"{extracted_date} {extracted_time} {self.timezone}")
@@ -49,6 +50,7 @@ class DateExtractor:
             print("bugger")
 
         return string_time
+
 
 # Parser from commandline:
 
@@ -64,26 +66,37 @@ parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you kn
                     what it is")
 args = parser.parse_args()
 
-# rubbish
+def main():
 
-# date_system = DateExtractor(datetime.utcnow())
-# print(datetime.strftime(DateExtractor.pass_dataobject(date_system), '%Y-%m-%d %H:%M %Z'))
+    if args.date is None:
+        date_system = DateExtractor(datetime.utcnow())
+        date_utc = DateExtractor.pass_dataobject(date_system)
+        print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
+
+    else: 
+        pass
+    
+
+if __name__ == '__main__':
+    main() 
+
+# rubbish
 
 # timezonez = timezone("CET")
 # date_from = DateExtractor.pass_dataobject(date_system)
 # print(date_from.astimezone(timezonez)) 
 
 
-insert_date = DateExtractor("2023-10-15 23:01", '%Y-%m-%d %H:%M', "CET")
+# insert_date = DateExtractor("2023-10-15 23:01", '%Y-%m-%d %H:%M', "CET")
 
-from_date = insert_date.pass_dataobject()
+# from_date = insert_date.pass_dataobject()
 
-todate_timezone = "CET"
-to_date_tz = timezone(todate_timezone)
-to_date = from_date.astimezone(to_date_tz)
+# todate_timezone = "CET"
+# to_date_tz = timezone(todate_timezone)
+# to_date = from_date.astimezone(to_date_tz)
 
-print(f"utc date is {from_date}")
-print(f"destination date is {to_date}")
+# print(f"utc date is {from_date}")
+# print(f"destination date is {to_date}")
 
 # print(type(local_date))
 # local_date.strftime("%Y-%m-%d %H:%M")
