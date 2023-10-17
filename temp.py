@@ -3,6 +3,8 @@
 from datetime import datetime 
 from pytz import timezone
 import argparse
+import re
+
 
 # Define the most relevant timezones
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -15,7 +17,8 @@ translates_to = {"UTC": "Universal Coordinated Time",
 
 class TimezoneChooser:
     """create the to-timezones, add more"""
-    def __init__(self, timezone, name="undefined timezone")
+    def __init__(self, timezone, name="undefined timezone"):
+        pass
 
 
 class DateExtractor:
@@ -37,26 +40,82 @@ class DateExtractor:
         return utc_date 
         
 def asker():
-    try:
-        input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
-        tz = timezone(input_tz)
-        return tz
-    except:
-        print("error asker")
+    count = 0 # We need a counter
+    while True: # Cycle until counter is met
+        try:
+            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+            tz = timezone(input_tz)
+            print(type(tz))
+            return tz
+            break
+        except:
+            print("error asker")
+            if count < 2 : # Ask Three Time then quit.
+                # if input_tz == "":
+                    # print(f"\n*** no valid time zone is provided *** "
+                        # f"please use a valid one, such as:\n")
+                    # for timezone, timename in translates_to.items():
+                        # print(f"- {timezone}, ({timename})")
+                print(f"You have written {input_tz}, do you mean one of the following?")
+                regmatch(input_tz)
+                # 
+                count = count + 1
+            else:
+                break
+
+    # count = 0 # We need a counter
+    # while True: # Cycle until counter is met
+    # try:
+    #     input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+    #     tz = timezone("CET")
+    #     print(tz)
+    #     return tz
+    #     # break
+    # except:
+    #     if count < 2 : # Ask Three Time then quit.
+    #         if input_tz == "":
+    #             print(f"\n*** no valid time zone is provided *** "
+    #                 f"please use a valid one, such as:\n")
+    #             for timezone, timename in translates_to.items():
+    #                 print(f"- {timezone}, ({timename})")
+    #         else:
+    #             print(f"You have written {input_tz}, do you mean one of the following?")
+    #             regmatch(input_tz)
+
+    #         count = count + 1
+    #     else:
+    #         tz = timezone("UTC")
+    #         print(f"\nNo valid timezone has been provided")
+    #         print(f"after 3 times. We are using ***UTC***\n")
+    #         return tz
+    #         # break
+    # print(tz)
+
 
 def parseTimezone():
+    """checks if timezone has been correctly input, if not
+    it asks for timezone via asker()function"""
 
     if args.timezone:
         try: 
             tz = timezone(args.timezone)
         except: 
             print(f"{args.timezone} is not valid")
-            try:
-                tz = (asker())
-            except:
-                print("we quit")
+            tz = (asker())
     else: 
-        tz = timezone(asker())
+        tz = (asker())
+
+def regmatch(input):
+    ''' searches for a partial match in the file of
+    cities, timezones and proposes the ones relevant'''
+
+    pattern = r'.*'+input+'.*'
+
+    with open("tz.asc") as f: 
+        find = re.findall(pattern, f.read(), re.IGNORECASE)
+    
+    for i in find:
+        print(i)
 
 def parsedate(get_date, get_time="00:00"):
         """ parses the provided date and transforms it to date elements
