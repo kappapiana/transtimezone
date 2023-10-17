@@ -21,23 +21,17 @@ class DateExtractor:
         self.utc_tz = timezone("UTC")
 
         if (type(self.date_time_string)) is str :
-            try:
-                self.date_obj = datetime.strptime(self.date_time_string, format)
-            except:
-                print(f"**ERROR**: {self.date_time_string} is bad time or date")
+            self.date_obj = datetime.strptime(self.date_time_string, format)
+                # print(f"**ERROR**: {self.date_time_string} is bad time or date")
         else:
-                self.date_obj = self.date_time_string 
+            self.date_obj = self.date_time_string 
 
     def pass_dataobject(self):
         """pass data object to functions as UTC"""
-        try:
-            localized_date = self.timezone.localize(self.date_obj)
-            utc_date = localized_date.astimezone(self.utc_tz)
-            self.utc_tz = utc_date
-            return utc_date 
-        except:
-            print("nothing to do")   
-
+        localized_date = self.timezone.localize(self.date_obj)
+        utc_date = localized_date.astimezone(self.utc_tz)
+        return utc_date 
+        
 def asker():
     try:
         input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
@@ -46,7 +40,7 @@ def asker():
     except:
         print("error asker")
 
-def checkTimezone():
+def parseTimezone():
 
     if args.timezone:
         try: 
@@ -60,7 +54,41 @@ def checkTimezone():
     else: 
         tz = timezone(asker())
 
-    return tz
+def parsedate(get_date, get_time="00:00"):
+        """ parses the provided date and transforms it to date elements
+        returns a datetime object (todo) """
+
+        year, month, day = [int(element) for element in get_date.split('-')]
+        hour, minutes = [int(element) for element in get_time.split(':')]
+
+        return datetime(year, month, day, hour, minutes)
+
+
+def typedate():
+    """function to enter manually (not from CLI)"""
+
+    input_hour = "00:00"  # sets default date in case of no input
+
+    while True:  # goes on until the dummy gets it right
+        date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+        # print(f"the entered date is {date}")
+
+        input_day = date[0]
+        if len(date) == 2:  # two elements are expected in the list
+            input_hour = date[1]
+        elif len(date) < 2:
+            print(f"you have entered only {len(date)} "
+                  f"elements\nwe use midnight")
+        try:
+            # print(input_day, input_hour)
+            input_date = parsedate(input_day, input_hour)
+            break
+        except:
+            print("you have entered a wrong data, see the reference it \
+                   must be YYYY-MM-DD HH:MM")
+
+    return input_date
+
 
 # Parser from commandline:
 
@@ -79,16 +107,31 @@ args = parser.parse_args()
 
 def main():
 
-    if args.date is None:
+    if args.date is None: # no input for date, use system date as UTC
         date_system = DateExtractor(datetime.utcnow())
         date_utc = DateExtractor.pass_dataobject(date_system)
         print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
 
     else:
-        tz = checkTimezone()
+        tz = parseTimezone()
+        
+        try:
+            date_time_string = (f"{args.date} {args.time}")
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
+            from_date = insert_date.pass_dataobject()
+            print(from_date)
 
-    print(tz)
+        except:
+            print("You have entered a wrong data, see the reference "
+                "it must be YYYY-MM-DD HH:MM")
+            
+            date_time_string = typedate()
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
+            from_date = insert_date.pass_dataobject()
+            # print(from_date)
 
+        
+        
 
     
 # Main function:
