@@ -13,6 +13,10 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
 
+class TimezoneChooser:
+    """create the to-timezones, add more"""
+    def __init__(self, timezone, name="undefined timezone")
+
 
 class DateExtractor:
     def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz="UTC"):
