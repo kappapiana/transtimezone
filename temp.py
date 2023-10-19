@@ -22,21 +22,27 @@ class TimezoneChooser:
 
 
 class DateExtractor:
-    def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz="UTC"):
+    def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz=""):
         self.date_time_string = date_time_string
-        self.timezone = timezone(tz)
-        self.utc_tz = timezone("UTC")
+        self.utc = timezone("UTC")
+        if tz == "":
+            self.tz_obj = timezone("UTC")
+            print(tz)
+        else: 
+            self.tz_obj = tz
+
 
         if (type(self.date_time_string)) is str :
+            # self.date_obj = datetime.strptime(self.date_time_string, format)
             self.date_obj = datetime.strptime(self.date_time_string, format)
-                # print(f"**ERROR**: {self.date_time_string} is bad time or date")
         else:
             self.date_obj = self.date_time_string 
 
     def pass_dataobject(self):
         """pass data object to functions as UTC"""
-        localized_date = self.timezone.localize(self.date_obj)
-        utc_date = localized_date.astimezone(self.utc_tz)
+        localized_date = self.tz_obj.localize(self.date_obj)
+        utc_date = localized_date.astimezone(self.utc)
+        print("utc date is", utc_date)
         return utc_date 
         
 def asker():
@@ -105,6 +111,8 @@ def parseTimezone():
     else: 
         tz = (asker())
 
+    return tz
+
 def regmatch(input):
     ''' searches for a partial match in the file of
     cities, timezones and proposes the ones relevant'''
@@ -144,6 +152,7 @@ def typedate():
                   f"elements\nwe use midnight")
         try:
             # print(input_day, input_hour)
+            print(f"You have entered {input_day} {input_hour}")
             input_date = parsedate(input_day, input_hour)
             break
         except:
@@ -177,12 +186,14 @@ def main():
 
     else:
         tz = parseTimezone()
+        print(f"Timezone is {tz}")
         
         try:
             date_time_string = (f"{args.date} {args.time}")
-            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", tz)
             from_date = insert_date.pass_dataobject()
-            print(from_date)
+            # print(tz)
+            # print(from_date.astimezone(tz))
 
         except:
             print("You have entered a wrong data, see the reference "
