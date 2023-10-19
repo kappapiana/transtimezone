@@ -8,7 +8,7 @@ from datetime import datetime as dt
 import pytz
 import datetime
 import argparse
-import re
+    import re
 
 # Define the most relevant timezones
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -96,6 +96,7 @@ def typedate():
 
     return input_date
 
+# 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("date", type=str, nargs="?",

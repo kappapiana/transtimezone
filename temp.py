@@ -17,8 +17,20 @@ translates_to = {"UTC": "Universal Coordinated Time",
 
 class TimezoneChooser:
     """create the to-timezones, add more"""
-    def __init__(self, timezone, name="undefined timezone"):
-        pass
+    def __init__(self):
+        # self.timezone = timezone
+        # self.name = name 
+        self.dictionary = {"UTC": "Universal Coordinated Time",
+                 "CET": "Central European Time",
+                 "America/New_York": "New York Time",
+                 "America/Los_Angeles": "Los Angeles Time",
+                 "Australia/Sydney": "Sydney Time",
+                 "Asia/Tokyo": "Tokyo (Japan) Time",
+                 "Europe/London": "London time, (GMT or BST)"}
+
+    def addEntry(self, timezone, name):
+        self.dictionary[timezone] = name
+
 
 
 class DateExtractor:
@@ -68,35 +80,6 @@ def asker():
                 count = count + 1
             else:
                 break
-
-    # count = 0 # We need a counter
-    # while True: # Cycle until counter is met
-    # try:
-    #     input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
-    #     tz = timezone("CET")
-    #     print(tz)
-    #     return tz
-    #     # break
-    # except:
-    #     if count < 2 : # Ask Three Time then quit.
-    #         if input_tz == "":
-    #             print(f"\n*** no valid time zone is provided *** "
-    #                 f"please use a valid one, such as:\n")
-    #             for timezone, timename in translates_to.items():
-    #                 print(f"- {timezone}, ({timename})")
-    #         else:
-    #             print(f"You have written {input_tz}, do you mean one of the following?")
-    #             regmatch(input_tz)
-
-    #         count = count + 1
-    #     else:
-    #         tz = timezone("UTC")
-    #         print(f"\nNo valid timezone has been provided")
-    #         print(f"after 3 times. We are using ***UTC***\n")
-    #         return tz
-    #         # break
-    # print(tz)
-
 
 def parseTimezone():
     """checks if timezone has been correctly input, if not
@@ -161,6 +144,15 @@ def typedate():
 
     return input_date
 
+def create_list():
+
+    list_timezones = TimezoneChooser()
+    list_timezones.addEntry("Rapunzel", "Tempo di cazzo")
+    print(list_timezones)
+
+    return list_timezones.dictionary
+    
+
 
 # Parser from commandline:
 
@@ -202,10 +194,12 @@ def main():
             date_time_string = typedate()
             insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
             from_date = insert_date.pass_dataobject()
-            # print(from_date)
+            # 
+            # create_list()
+  
+    list_timezones = create_list()
+    print(list_timezones)
 
-        
-        
 
     
 # Main function:
