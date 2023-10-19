@@ -81,19 +81,17 @@ def asker():
             else:
                 break
 
-def parseTimezone():
+def parseTimezone(input_tz):
     """checks if timezone has been correctly input, if not
     it asks for timezone via asker()function"""
 
-    if args.timezone:
-        try: 
-            tz = timezone(args.timezone)
-        except: 
-            print(f"{args.timezone} is not valid")
-            tz = (asker())
-    else: 
+    
+    try: 
+        tz = timezone(input_tz)
+    except: 
+        print(f"{input_tz} is not valid")
         tz = (asker())
-
+    
     return tz
 
 def regmatch(input):
@@ -144,14 +142,22 @@ def typedate():
 
     return input_date
 
-def create_list():
+def addto_list(zone_to, name_to="This is the time"):
 
     list_timezones = TimezoneChooser()
-    list_timezones.addEntry("Rapunzel", "Tempo di cazzo")
-    print(list_timezones)
+    list_timezones.addEntry(zone_to, "Time added by you")
 
     return list_timezones.dictionary
     
+def create_time_to(zone_to):
+    list_timezones = addto_list(zone_to)
+    for timezone, timename in list_timezones.items():
+        print(f"- {timezone}, ({timename})")
+
+    return 
+
+    
+
 
 
 # Parser from commandline:
@@ -177,7 +183,7 @@ def main():
         print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
 
     else:
-        tz = parseTimezone()
+        tz = parseTimezone(args.timezone)
         print(f"Timezone is {tz}")
         
         try:
@@ -196,10 +202,12 @@ def main():
             from_date = insert_date.pass_dataobject()
             # 
             # create_list()
-  
-    list_timezones = create_list()
-    print(list_timezones)
 
+    if args.tozone:
+    
+        timezone_to = parseTimezone(args.tozone)
+        create_time_to(timezone_to)
+        
 
     
 # Main function:
