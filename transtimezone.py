@@ -211,16 +211,6 @@ def main():
     # instantiate class
     list_timezones = TimezoneChooser()
 
-    # if args.tozone:
-    #     timezone_to = parseTimezone(args.tozone)
-    #     print(timezone_to)
-    #     list_timezones.addEntry(timezone_to, "Time added by you")
-    #     for timezone, timename in list_timezones.items():
-    #         print(f"- {timezone}, ({timename})")
-    
-    # else:
-    #     create_time()
-        
     if args.tozone:
         """Check if there is a desired to-time and adds it
         to dictionary"""
@@ -234,15 +224,18 @@ def main():
 
     # this is actually the bit that calculates and outputs times!
 
+    print("+------------------------------------- Times----------------------------------------+")
+    print(f"| {'':<82}|")
+
     for tz, timename in list_timezones.dictionary.items():
         translated_to = from_date.astimezone(timezone(tz))
         time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-        # print(f"- {tz}, {timename + ':':<21} : {time_true}")
-        # print(f"|{tz + ':':<21} {time_true :<25} {timezone :13}|")
       
         print(f"| {tz + ':':25} {time_true:<25} {timename :<30}|")
 
         # print(time_true)
+    print(f"| {'':<82}|")
+    print("+-----------------------------------------------------------------------------------+")
     
     
 # Main function:
