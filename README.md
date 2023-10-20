@@ -21,12 +21,20 @@ some countries/cities. The one provided here are only an example.
 With this script you can enter a sensible date and have multiple dates in
 different timezones.
 
+If you just want to know what time it is in different timezones, just go for 
+
+```shell
+./transtimezone.py 2022-10-28 10:00
+```
+
 You can enter the date directly in the CLI, using the `YYYY-MM-DD` convention (as
 you always should):
 
 ```shell
-$ ./transtimezone.py 2022-10-28 10:00
+$ ./transtimezone.py
 ```
+
+And it will take the system date 
 
 It will ask the timezone.
 

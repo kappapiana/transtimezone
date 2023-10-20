@@ -69,18 +69,25 @@ def asker():
             return tz
             break
         except:
-            print("error asker")
-            if count < 2 : # Ask Three Time then quit.
+            if count < 2 : # Ask Three Times then quit.
                 # if input_tz == "":
                     # print(f"\n*** no valid time zone is provided *** "
                         # f"please use a valid one, such as:\n")
                     # for timezone, timename in translates_to.items():
                         # print(f"- {timezone}, ({timename})")
-                print(f"You have written {input_tz}, do you mean one of the following?")
-                regmatch(input_tz)
+                list_matches = regmatch(input_tz)
+                for i in list_matches[0:15]:
+                    print(i)
+
+                print(
+                    f"\nYou have written \"{input_tz}\", do you mean one of the following "
+                    "(first 15 matches)?")
+                
                 # 
                 count = count + 1
             else:
+                tz = timezone("UTC")
+                return tz
                 break
 
 def parseTimezone(input_tz):
@@ -101,12 +108,17 @@ def regmatch(input):
     cities, timezones and proposes the ones relevant'''
 
     pattern = r'.*'+input+'.*'
+    results = []
 
     with open("tz.asc") as f: 
         find = re.findall(pattern, f.read(), re.IGNORECASE)
     
     for i in find:
-        print(i)
+        if i != "" :
+            results.append(i)
+
+    return results
+    
 
 def parsedate(get_date, get_time="00:00"):
         """ parses the provided date and transforms it to date elements
