@@ -220,7 +220,12 @@ def main():
         #     print(f"- {timezone}, ({timename})")
     
     else:
-        create_time()
+        print(
+            "we need to create the function "
+            f"that creates the actual times, "
+            "only this time it will be without the "
+            "added timelist from '--tozone' ")
+        # create_time()
         
 
 
