@@ -210,7 +210,7 @@ def main():
         #we need the string, not the object
         timezone_to = str(timezone_parsed) 
         
-        list_timezones.addEntry(timezone_to, "Time added by you")
+        list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
 
     for tz, timename in list_timezones.dictionary.items():
