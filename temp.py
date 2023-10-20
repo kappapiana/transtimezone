@@ -41,7 +41,7 @@ class DateExtractor:
         self.utc = timezone("UTC")
         if tz == "":
             self.tz_obj = timezone("UTC")
-            print(tz)
+            # print(tz)
         else: 
             self.tz_obj = tz
 
@@ -56,7 +56,7 @@ class DateExtractor:
         """pass data object to functions as UTC"""
         localized_date = self.tz_obj.localize(self.date_obj)
         utc_date = localized_date.astimezone(self.utc)
-        print("utc date is", utc_date)
+        # print("utc date is", utc_date)
         return utc_date 
         
 def asker():
@@ -65,7 +65,7 @@ def asker():
         try:
             input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
             tz = timezone(input_tz)
-            print(type(tz))
+            # print(type(tz))
             return tz
             break
         except:
@@ -168,6 +168,7 @@ def main():
         date_system = DateExtractor(datetime.utcnow())
         date_utc = DateExtractor.pass_dataobject(date_system)
         print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
+        from_date = date_utc
 
     else:
         tz = parseTimezone(args.timezone)
@@ -192,7 +193,6 @@ def main():
     
     # instantiate class
     list_timezones = TimezoneChooser()
-    print(f"la lista è {list_timezones.dictionary}")
 
     # if args.tozone:
     #     timezone_to = parseTimezone(args.tozone)
@@ -205,6 +205,9 @@ def main():
     #     create_time()
         
     if args.tozone:
+        """Check if there is a desired to-time and adds it
+        to dictionary"""
+
         #check if valid,or ask
         timezone_parsed = parseTimezone(args.tozone) 
         #we need the string, not the object
@@ -212,42 +215,20 @@ def main():
         
         list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
+    # this is actually the bit that calculates and outputs times!
 
     for tz, timename in list_timezones.dictionary.items():
-        print(f"- {tz}, ({timename})")
         translated_to = from_date.astimezone(timezone(tz))
         time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-        print(time_true)
+        # print(f"- {tz}, {timename + ':':<21} : {time_true}")
+        # print(f"|{tz + ':':<21} {time_true :<25} {timezone :13}|")
+      
+        print(f"| {tz + ':':25} {time_true:<25} {timename :<30}|")
+
+        # print(time_true)
     
-
-
-
     
 # Main function:
 
 if __name__ == '__main__':
     main() 
-
-# rubbish
-
-# timezonez = timezone("CET")
-# date_from = DateExtractor.pass_dataobject(date_system)
-# print(date_from.astimezone(timezonez)) 
-
-
-# insert_date = DateExtractor("2023-10-15 23:01", '%Y-%m-%d %H:%M', "CET")
-
-# from_date = insert_date.pass_dataobject()
-
-# todate_timezone = "CET"
-# to_date_tz = timezone(todate_timezone)
-# to_date = from_date.astimezone(to_date_tz)
-
-# print(f"utc date is {from_date}")
-# print(f"destination date is {to_date}")
-
-# print(type(local_date))
-# local_date.strftime("%Y-%m-%d %H:%M")
-# print(datetime.strftime(DateExtractor.pass_dataobject(insert_date), '%Y-%m-%d %H:%M'))
-# print(DateExtractor.extract_stringtime(insert_date))
-
