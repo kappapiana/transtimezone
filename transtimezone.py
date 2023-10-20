@@ -4,6 +4,10 @@ from datetime import datetime
 from pytz import timezone
 import argparse
 import re
+import os
+
+script_directory = script_dir = os.path.abspath( os.path.dirname( __file__ ) )
+
 
 
 # Define the most relevant timezones
@@ -17,7 +21,7 @@ translates_to = {"UTC": "Universal Coordinated Time",
 
 class TimezoneChooser:
     """create the to-timezones, add more"""
-    def __init__(self):
+    def __init__(self): 
         # self.timezone = timezone
         # self.name = name 
         self.dictionary = {"UTC": "Universal Coordinated Time",
@@ -109,8 +113,9 @@ def regmatch(input):
 
     pattern = r'.*'+input+'.*'
     results = []
+    timezones_file = script_dir + "/tz.asc"
 
-    with open("tz.asc") as f: 
+    with open(timezones_file) as f: 
         find = re.findall(pattern, f.read(), re.IGNORECASE)
     
     for i in find:
