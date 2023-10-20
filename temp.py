@@ -209,24 +209,16 @@ def main():
         timezone_parsed = parseTimezone(args.tozone) 
         #we need the string, not the object
         timezone_to = str(timezone_parsed) 
-
-
         
-        print(f"l'argomentto che passiam to è {timezone_to}")
         list_timezones.addEntry(timezone_to, "Time added by you")
-        print(f"la lista è {list_timezones.dictionary}")
 
-        # for timezone, timename in list_timezones.dictionary():
-        #     print(f"- {timezone}, ({timename})")
+
+    for tz, timename in list_timezones.dictionary.items():
+        print(f"- {tz}, ({timename})")
+        translated_to = from_date.astimezone(timezone(tz))
+        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        print(time_true)
     
-    else:
-        print(
-            "we need to create the function "
-            f"that creates the actual times, "
-            "only this time it will be without the "
-            "added timelist from '--tozone' ")
-        # create_time()
-        
 
 
 
