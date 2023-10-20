@@ -30,6 +30,8 @@ class TimezoneChooser:
 
     def addEntry(self, timezone, name):
         self.dictionary[timezone] = name
+        # return self.dictionary
+
 
 
 
@@ -142,21 +144,6 @@ def typedate():
 
     return input_date
 
-def addto_list(zone_to, name_to="This is the time"):
-
-    list_timezones = TimezoneChooser()
-    list_timezones.addEntry(zone_to, "Time added by you")
-
-    return list_timezones.dictionary
-    
-def create_time_to(zone_to):
-    list_timezones = addto_list(zone_to)
-    for timezone, timename in list_timezones.items():
-        print(f"- {timezone}, ({timename})")
-
-    return 
-
-    
 
 
 
@@ -202,12 +189,41 @@ def main():
             from_date = insert_date.pass_dataobject()
             # 
             # create_list()
-
-    if args.tozone:
     
-        timezone_to = parseTimezone(args.tozone)
-        create_time_to(timezone_to)
+    # instantiate class
+    list_timezones = TimezoneChooser()
+    print(f"la lista è {list_timezones.dictionary}")
+
+    # if args.tozone:
+    #     timezone_to = parseTimezone(args.tozone)
+    #     print(timezone_to)
+    #     list_timezones.addEntry(timezone_to, "Time added by you")
+    #     for timezone, timename in list_timezones.items():
+    #         print(f"- {timezone}, ({timename})")
+    
+    # else:
+    #     create_time()
         
+    if args.tozone:
+        #check if valid,or ask
+        timezone_parsed = parseTimezone(args.tozone) 
+        #we need the string, not the object
+        timezone_to = str(timezone_parsed) 
+
+
+        
+        print(f"l'argomentto che passiam to è {timezone_to}")
+        list_timezones.addEntry(timezone_to, "Time added by you")
+        print(f"la lista è {list_timezones.dictionary}")
+
+        # for timezone, timename in list_timezones.dictionary():
+        #     print(f"- {timezone}, ({timename})")
+    
+    else:
+        create_time()
+        
+
+
 
     
 # Main function:
