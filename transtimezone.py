@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 
-# SPDX-FileCopyrightText: Carlo Piana
-#
-# SPDX-License-Identifier: Apache-2.0
-
-from datetime import datetime as dt
-import pytz
-import datetime
+from datetime import datetime 
+from pytz import timezone
 import argparse
-    import re
+import re
+
 
 # Define the most relevant timezones
 translates_to = {"UTC": "Universal Coordinated Time",
@@ -19,13 +15,90 @@ translates_to = {"UTC": "Universal Coordinated Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
 
-current_utc = dt.now(pytz.timezone('UTC'))  
-print(current_utc)
+class TimezoneChooser:
+    """create the to-timezones, add more"""
+    def __init__(self):
+        # self.timezone = timezone
+        # self.name = name 
+        self.dictionary = {"UTC": "Universal Coordinated Time",
+                 "CET": "Central European Time",
+                 "America/New_York": "New York Time",
+                 "America/Los_Angeles": "Los Angeles Time",
+                 "Australia/Sydney": "Sydney Time",
+                 "Asia/Tokyo": "Tokyo (Japan) Time",
+                 "Europe/London": "London time, (GMT or BST)"}
 
+    def addEntry(self, timezone, name):
+        self.dictionary[timezone] = name
+        # return self.dictionary
+
+
+
+
+class DateExtractor:
+    def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz=""):
+        self.date_time_string = date_time_string
+        self.utc = timezone("UTC")
+        if tz == "":
+            self.tz_obj = timezone("UTC")
+            # print(tz)
+        else: 
+            self.tz_obj = tz
+
+
+        if (type(self.date_time_string)) is str :
+            # self.date_obj = datetime.strptime(self.date_time_string, format)
+            self.date_obj = datetime.strptime(self.date_time_string, format)
+        else:
+            self.date_obj = self.date_time_string 
+
+    def pass_dataobject(self):
+        """pass data object to functions as UTC"""
+        localized_date = self.tz_obj.localize(self.date_obj)
+        utc_date = localized_date.astimezone(self.utc)
+        # print("utc date is", utc_date)
+        return utc_date 
+        
+def asker():
+    count = 0 # We need a counter
+    while True: # Cycle until counter is met
+        try:
+            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+            tz = timezone(input_tz)
+            # print(type(tz))
+            return tz
+            break
+        except:
+            print("error asker")
+            if count < 2 : # Ask Three Time then quit.
+                # if input_tz == "":
+                    # print(f"\n*** no valid time zone is provided *** "
+                        # f"please use a valid one, such as:\n")
+                    # for timezone, timename in translates_to.items():
+                        # print(f"- {timezone}, ({timename})")
+                print(f"You have written {input_tz}, do you mean one of the following?")
+                regmatch(input_tz)
+                # 
+                count = count + 1
+            else:
+                break
+
+def parseTimezone(input_tz):
+    """checks if timezone has been correctly input, if not
+    it asks for timezone via asker()function"""
+
+    
+    try: 
+        tz = timezone(input_tz)
+    except: 
+        print(f"{input_tz} is not valid")
+        tz = (asker())
+    
+    return tz
 
 def regmatch(input):
     ''' searches for a partial match in the file of
-    cities and proposes the ones relevant'''
+    cities, timezones and proposes the ones relevant'''
 
     pattern = r'.*'+input+'.*'
 
@@ -35,42 +108,14 @@ def regmatch(input):
     for i in find:
         print(i)
 
-def asker():
-    count = 0 # We need a counter
-    while True: # Cycle until counter is met
-        try:
-            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
-            tz = pytz.timezone(input_tz)
-            return tz
-            break
-        except:
-            if count < 2 : # Ask Three Time then quit.
-                if input_tz == "":
-                    print(f"\n*** no valid time zone is provided *** "
-                        f"please use a valid one, such as:\n")
-                    for timezone, timename in translates_to.items():
-                        print(f"- {timezone}, ({timename})")
-                else:
-                    print(f"You have written {input_tz}, do you mean one of the following?")
-                    regmatch(input_tz)
-
-                count = count + 1
-            else:
-                tz = pytz.timezone("UTC")
-                print(f"\nNo valid timezone has been provided")
-                print(f"after 3 times. We are using ***UTC***\n")
-                return tz
-                break
-    print(tz)
-
 def parsedate(get_date, get_time="00:00"):
-    """ parses the provided date and transforms it to date elements
-    returns a datetime object (todo) """
+        """ parses the provided date and transforms it to date elements
+        returns a datetime object (todo) """
 
-    year, month, day = [int(element) for element in get_date.split('-')]
-    hour, minutes = [int(element) for element in get_time.split(':')]
+        year, month, day = [int(element) for element in get_date.split('-')]
+        hour, minutes = [int(element) for element in get_time.split(':')]
 
-    return datetime.datetime(year, month, day, hour, minutes)
+        return datetime(year, month, day, hour, minutes)
 
 
 def typedate():
@@ -80,6 +125,7 @@ def typedate():
 
     while True:  # goes on until the dummy gets it right
         date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+        # print(f"the entered date is {date}")
 
         input_day = date[0]
         if len(date) == 2:  # two elements are expected in the list
@@ -88,6 +134,8 @@ def typedate():
             print(f"you have entered only {len(date)} "
                   f"elements\nwe use midnight")
         try:
+            # print(input_day, input_hour)
+            print(f"You have entered {input_day} {input_hour}")
             input_date = parsedate(input_day, input_hour)
             break
         except:
@@ -96,7 +144,10 @@ def typedate():
 
     return input_date
 
-# 
+
+
+
+# Parser from commandline:
 
 parser = argparse.ArgumentParser()
 parser.add_argument("date", type=str, nargs="?",
@@ -110,68 +161,74 @@ parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you kn
                     what it is")
 args = parser.parse_args()
 
-if args.date is None:
-    print("No date has been entered")
-    from_date = current_utc 
-    date_empty = True
-    tz = str('UTC')
 
-else:
-    try:
-        from_date = parsedate(args.date, args.time)
-    except:
-        print("You have entered a wrong data, see the reference "
-              "it must be YYYY-MM-DD HH:MM")
-        from_date = typedate()
+def main():
 
-if date_empty is True:
-    pass
-
-else:
-    if args.timezone is None:
-        tz = asker()
+    if args.date is None: # no input for date, use system date as UTC
+        date_system = DateExtractor(datetime.utcnow())
+        date_utc = DateExtractor.pass_dataobject(date_system)
+        print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
+        from_date = date_utc
 
     else:
-        try: 
-            tz = pytz.timezone(args.timezone)
+        tz = parseTimezone(args.timezone)
+        print(f"Timezone is {tz}")
+        
+        try:
+            date_time_string = (f"{args.date} {args.time}")
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", tz)
+            from_date = insert_date.pass_dataobject()
+            # print(tz)
+            # print(from_date.astimezone(tz))
+
         except:
-            tz = asker()
-
-    localized_from_date = tz.localize(from_date)
-
-print("\nEntered Time is:", localized_from_date.strftime("%Y:%m:%d %H:%M:%S %Z (%z)"))
-
-if args.tozone: 
-    try: 
-        translated_to = localized_from_date.astimezone(pytz.timezone(args.tozone))
-        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-        zone_true = translated_to.strftime("(%z)")
-        print("\n+--------------------------selected Time-------------------------------------+")
-        print(f"|\n| Translates To {args.tozone + ':':<21} {time_true:<25} {zone_true :13}|\n|")
-
-        print("+---------------------------Other Times--------------------------------------+")
-    except:
-        timezone_to = str(asker()) #use the asking function
-        translated_to = localized_from_date.astimezone(pytz.timezone(timezone_to))
-        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-        zone_true = translated_to.strftime("(%z)")
-        print("\n+--------------------------selected Time-------------------------------------+")
-        print(f"| {'':<75}|")
-        print(f"| Translates To {timezone_to + ':':<21} {time_true:<25} {zone_true :13}|")
-        print(f"| {'':<75}|")
-        print("+---------------------------Other Times--------------------------------------+")
+            print("You have entered a wrong data, see the reference "
+                "it must be YYYY-MM-DD HH:MM")
+            
+            date_time_string = typedate()
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
+            from_date = insert_date.pass_dataobject()
+            # 
+            # create_list()
     
-else:
-    print("+----------------------------------------------------------------------------+")
-    print(f"| {'':<75}|")
-    print("| If these times do not provide the desidered timezone, try -o [timezone to] |")
-    print(f"| {'':<75}|")
+    # instantiate class
+    list_timezones = TimezoneChooser()
 
-for timezone, timename in translates_to.items():
+    # if args.tozone:
+    #     timezone_to = parseTimezone(args.tozone)
+    #     print(timezone_to)
+    #     list_timezones.addEntry(timezone_to, "Time added by you")
+    #     for timezone, timename in list_timezones.items():
+    #         print(f"- {timezone}, ({timename})")
+    
+    # else:
+    #     create_time()
+        
+    if args.tozone:
+        """Check if there is a desired to-time and adds it
+        to dictionary"""
 
-    translated_to = localized_from_date.astimezone(pytz.timezone(timezone))
-    time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-    zone_true = translated_to.strftime("(%z)")
-    print(f"| {timename + ':':<35} {time_true:<25} {zone_true :13}|")
+        #check if valid,or ask
+        timezone_parsed = parseTimezone(args.tozone) 
+        #we need the string, not the object
+        timezone_to = str(timezone_parsed) 
+        
+        list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
-print("+----------------------------------------------------------------------------+")
+    # this is actually the bit that calculates and outputs times!
+
+    for tz, timename in list_timezones.dictionary.items():
+        translated_to = from_date.astimezone(timezone(tz))
+        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        # print(f"- {tz}, {timename + ':':<21} : {time_true}")
+        # print(f"|{tz + ':':<21} {time_true :<25} {timezone :13}|")
+      
+        print(f"| {tz + ':':25} {time_true:<25} {timename :<30}|")
+
+        # print(time_true)
+    
+    
+# Main function:
+
+if __name__ == '__main__':
+    main() 
