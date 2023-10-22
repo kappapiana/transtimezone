@@ -162,11 +162,11 @@ def input_parser():
                         what it is")
     parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you know \
                         what it is")
-    args = parser.parse_args()
+    input_args = parser.parse_args()
 
-    return args
+    return input_args
 
-def find_from_date():
+def find_from_date(args):
     '''This finds the date from which the computation is made
     '''
     if args.date is None: # no input for date, use system date as UTC
@@ -199,7 +199,7 @@ def find_from_date():
     return from_date
 
 
-def create_output(from_date):    
+def create_output(from_date, args):    
     ''' this is actually the bit that calculates and outputs times'''
 
     # instantiate class
@@ -234,9 +234,9 @@ def main():
 
     args = input_parser()
 
-    from_date = find_from_date()
+    from_date = find_from_date(args)
 
-    create_output(from_date)
+    create_output(from_date, args)
     
 if __name__ == '__main__':
     main() 
