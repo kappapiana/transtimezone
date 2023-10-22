@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# SPDX-FileCopyrightText: Carlo Piana
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from datetime import datetime 
 from pytz import timezone
 import argparse
@@ -8,29 +12,28 @@ import os
 
 script_directory = script_dir = os.path.abspath( os.path.dirname( __file__ ) )
 
-
-
 # Define the most relevant timezones
-translates_to = {"UTC": "Universal Coordinated Time",
-                 "CET": "Central European Time",
+translates_to = {"CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
                  "Australia/Sydney": "Sydney Time",
                  "Asia/Tokyo": "Tokyo (Japan) Time",
                  "Europe/London": "London time, (GMT or BST)"}
+ 
+# Optional, load timezones from config file
+if os.path.isfile("listzones.asc"):
+    with open("listzones.asc") as f:
+            for line in f:
+                (k, v) = line.split(":")
+                translates_to[k] = v
+
 
 class TimezoneChooser:
     """create the to-timezones, add more"""
     def __init__(self): 
         # self.timezone = timezone
         # self.name = name 
-        self.dictionary = {"UTC": "Universal Coordinated Time",
-                 "CET": "Central European Time",
-                 "America/New_York": "New York Time",
-                 "America/Los_Angeles": "Los Angeles Time",
-                 "Australia/Sydney": "Sydney Time",
-                 "Asia/Tokyo": "Tokyo (Japan) Time",
-                 "Europe/London": "London time, (GMT or BST)"}
+        self.dictionary = translates_to
 
     def addEntry(self, timezone, name):
         self.dictionary[timezone] = name
@@ -45,7 +48,6 @@ class DateExtractor:
         self.utc = timezone("UTC")
         if tz == "":
             self.tz_obj = timezone("UTC")
-            # print(tz)
         else: 
             self.tz_obj = tz
 
@@ -60,7 +62,6 @@ class DateExtractor:
         """pass data object to functions as UTC"""
         localized_date = self.tz_obj.localize(self.date_obj)
         utc_date = localized_date.astimezone(self.utc)
-        # print("utc date is", utc_date)
         return utc_date 
         
 def asker():
@@ -69,16 +70,10 @@ def asker():
         try:
             input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
             tz = timezone(input_tz)
-            # print(type(tz))
             return tz
             break
         except:
             if count < 2 : # Ask Three Times then quit.
-                # if input_tz == "":
-                    # print(f"\n*** no valid time zone is provided *** "
-                        # f"please use a valid one, such as:\n")
-                    # for timezone, timename in translates_to.items():
-                        # print(f"- {timezone}, ({timename})")
                 list_matches = regmatch(input_tz)
                 for i in list_matches[0:15]:
                     print(i)
@@ -142,7 +137,6 @@ def typedate():
 
     while True:  # goes on until the dummy gets it right
         date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
-        # print(f"the entered date is {date}")
 
         input_day = date[0]
         if len(date) == 2:  # two elements are expected in the list
@@ -184,7 +178,8 @@ def main():
     if args.date is None: # no input for date, use system date as UTC
         date_system = DateExtractor(datetime.utcnow())
         date_utc = DateExtractor.pass_dataobject(date_system)
-        print(date_utc.strftime("%Y-%m-%d %H:%M %Z - %z"))
+        string_date = date_utc.strftime("%Y-%m-%d %H:%M %Z - %z")
+        print(f"Entered date is {string_date}")
         from_date = date_utc
 
     else:
