@@ -56,18 +56,19 @@ string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 At the end, you will have a list of times
 
 ```
-Entered Time is: 2022:11:22 11:00:00 EST (-0500)
+Entered date is 2023-10-22 13:29 UTC - +0000
 +------------------------------------- Times----------------------------------------+
 | Timezone:                 TIME:                     Comment:                      |
 |                                                                                   |
-| CET:                      2023:10:21 17:44:00 CEST  Central European Time         |
-| America/New_York:         2023:10:21 11:44:00 EDT   New York Time                 |
-| America/Los_Angeles:      2023:10:21 08:44:00 PDT   Los Angeles Time              |
-| Australia/Sydney:         2023:10:22 02:44:00 AEDT  Sydney Time                   |
-| Asia/Tokyo:               2023:10:22 00:44:00 JST   Tokyo (Japan) Time            |
-| Europe/London:            2023:10:21 16:44:00 BST   London time, (GMT or BST)     |
-| UTC:                      2023:10:21 15:44:00 UTC   Universal Time                |
-| America/Chicago:          2023:10:21 10:44:00 CDT   *** THIS the time you WANT ***|
+| CET:                      2023:10:22 15:29:28 CEST  Central European Time         |
+| America/New_York:         2023:10:22 09:29:28 EDT   New York Time                 |
+| America/Los_Angeles:      2023:10:22 06:29:28 PDT   Los Angeles Time              |
+| Australia/Sydney:         2023:10:23 00:29:28 AEDT  Sydney Time                   |
+| Asia/Tokyo:               2023:10:22 22:29:28 JST   Tokyo (Japan) Time            |
+| Europe/London:            2023:10:22 14:29:28 BST   London time, (GMT or BST)     |
+| UTC:                      2023:10:22 13:29:28 UTC   Universal Time                |
+| America/Chicago:          2023:10:22 08:29:28 CDT   Chicago Time (lakes)          |
+| America/Anchorage:        2023:10:22 05:29:28 AKDT  Alaska Time                   |
 |                                                                                   |
 +-----------------------------------------------------------------------------------+
 
