@@ -41,8 +41,6 @@ class TimezoneChooser:
         # return self.dictionary
 
 
-
-
 class DateExtractor:
     def __init__(self, date_time_string, format='%Y-%m-%d %H:%M:%S', tz=""):
         self.date_time_string = date_time_string
@@ -51,8 +49,6 @@ class DateExtractor:
             self.tz_obj = timezone("UTC")
         else: 
             self.tz_obj = tz
-
-
         if (type(self.date_time_string)) is str :
             # self.date_obj = datetime.strptime(self.date_time_string, format)
             self.date_obj = datetime.strptime(self.date_time_string, format)
@@ -93,8 +89,7 @@ def asker():
 def parseTimezone(input_tz):
     """checks if timezone has been correctly input, if not
     it asks for timezone via asker()function"""
-
-    
+ 
     try: 
         tz = timezone(input_tz)
     except: 
@@ -120,7 +115,6 @@ def regmatch(input):
 
     return results
     
-
 def parsedate(get_date, get_time="00:00"):
         """ parses the provided date and transforms it to date elements
         returns a datetime object (todo) """
@@ -129,7 +123,6 @@ def parsedate(get_date, get_time="00:00"):
         hour, minutes = [int(element) for element in get_time.split(':')]
 
         return datetime(year, month, day, hour, minutes)
-
 
 def typedate():
     """function to enter manually (not from CLI)"""
@@ -156,9 +149,6 @@ def typedate():
 
     return input_date
 
-
-
-
 # Parser from commandline:
 
 parser = argparse.ArgumentParser()
@@ -172,7 +162,6 @@ parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you 
 parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you know \
                     what it is")
 args = parser.parse_args()
-
 
 def main():
 
@@ -219,9 +208,6 @@ def main():
         list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
     # this is actually the bit that calculates and outputs times!
-
-    space = " "
-
     print("+------------------------------------- Times----------------------------------------+")
     print(f"| {'Timezone:':25} {'TIME:':<25} {'Comment:' :<30}|")
     print(f"| {'':<82}|")
@@ -236,8 +222,6 @@ def main():
     print(f"| {'':<82}|")
     print("+-----------------------------------------------------------------------------------+")
     
-    
 # Main function:
-
 if __name__ == '__main__':
     main() 
