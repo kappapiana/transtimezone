@@ -149,22 +149,26 @@ def typedate():
 
     return input_date
 
-# Parser from commandline:
+def input_parser():
+    '''Parser from commandline'''
 
-parser = argparse.ArgumentParser()
-parser.add_argument("date", type=str, nargs="?",
-                    help="The date in YYYY-MM-DD format")
-parser.add_argument("time", type=str, nargs="?", default="00:00",
-                    help="The time in HH:MM format (if not provided, \
-                    defaults to 00:00)")
-parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know \
-                    what it is")
-parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you know \
-                    what it is")
-args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("date", type=str, nargs="?",
+                        help="The date in YYYY-MM-DD format")
+    parser.add_argument("time", type=str, nargs="?", default="00:00",
+                        help="The time in HH:MM format (if not provided, \
+                        defaults to 00:00)")
+    parser.add_argument("-t", "--timezone", type=str, help="Add the timezone if you know \
+                        what it is")
+    parser.add_argument("-o", "--tozone", type=str, help="Add the timezone if you know \
+                        what it is")
+    args = parser.parse_args()
 
-def main():
+    return args
 
+def find_from_date():
+    '''This finds the date from which the computation is made
+    '''
     if args.date is None: # no input for date, use system date as UTC
         date_system = DateExtractor(datetime.utcnow())
         date_utc = DateExtractor.pass_dataobject(date_system)
@@ -192,7 +196,12 @@ def main():
             from_date = insert_date.pass_dataobject()
             # 
             # create_list()
-    
+    return from_date
+
+
+def create_output(from_date):    
+    ''' this is actually the bit that calculates and outputs times'''
+
     # instantiate class
     list_timezones = TimezoneChooser()
 
@@ -207,7 +216,6 @@ def main():
         
         list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
-    # this is actually the bit that calculates and outputs times!
     print("+------------------------------------- Times----------------------------------------+")
     print(f"| {'Timezone:':25} {'TIME:':<25} {'Comment:' :<30}|")
     print(f"| {'':<82}|")
@@ -218,10 +226,17 @@ def main():
       
         print(f"| {tz + ':':25} {time_true:<25} {timename :<30}|")
 
-        # print(time_true)
     print(f"| {'':<82}|")
     print("+-----------------------------------------------------------------------------------+")
+
+
+def main():
+
+    args = input_parser()
+
+    from_date = find_from_date()
+
+    create_output(from_date)
     
-# Main function:
 if __name__ == '__main__':
     main() 
