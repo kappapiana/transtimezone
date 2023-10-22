@@ -51,7 +51,7 @@ anything when prompted: the script will use the local timezone as obtained from
 the system.
 
 If you omit any parameter, the program will ask to enter the date and time
-string. Remeber that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
+string. Remember that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
 
 At the end, you will have a list of times
 
