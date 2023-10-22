@@ -219,7 +219,10 @@ def main():
 
     # this is actually the bit that calculates and outputs times!
 
+    space = " "
+
     print("+------------------------------------- Times----------------------------------------+")
+    print(f"| {'Timezone:':25} {'TIME:':<25} {'Comment:' :<30}|")
     print(f"| {'':<82}|")
 
     for tz, timename in list_timezones.dictionary.items():

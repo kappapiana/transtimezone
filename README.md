@@ -57,18 +57,23 @@ At the end, you will have a list of times
 
 ```
 Entered Time is: 2022:11:22 11:00:00 EST (-0500)
-+----------------------------------------------------------------------------+
-| Universal Coordinated Time:      2022:11:22 16:00:00 UTC   (+0000)         |
-| Central European Time:           2022:11:22 17:00:00 CET   (+0100)         |
-| New York Time:                   2022:11:22 11:00:00 EST   (-0500)         |
-| Los Angeles Time:                2022:11:22 08:00:00 PST   (-0800)         |
-| Cuba time:                       2022:11:22 11:00:00 CST   (-0500)         |
-| Zulu time (or US Navy Time):     2022:11:22 16:00:00 UTC   (+0000)         |
-| Sydney Time:                     2022:11:23 03:00:00 AEDT  (+1100)         |
-| Tokyo (Japan) Time:              2022:11:23 01:00:00 JST   (+0900)         |
-| Dubai (Gulf) time:               2022:11:22 20:00:00 +04   (+0400)         |
-+----------------------------------------------------------------------------+
++------------------------------------- Times----------------------------------------+
+| Timezone:                 TIME:                     Comment:                      |
+|                                                                                   |
+| CET:                      2023:10:21 17:44:00 CEST  Central European Time         |
+| America/New_York:         2023:10:21 11:44:00 EDT   New York Time                 |
+| America/Los_Angeles:      2023:10:21 08:44:00 PDT   Los Angeles Time              |
+| Australia/Sydney:         2023:10:22 02:44:00 AEDT  Sydney Time                   |
+| Asia/Tokyo:               2023:10:22 00:44:00 JST   Tokyo (Japan) Time            |
+| Europe/London:            2023:10:21 16:44:00 BST   London time, (GMT or BST)     |
+| UTC:                      2023:10:21 15:44:00 UTC   Universal Time                |
+| America/Chicago:          2023:10:21 10:44:00 CDT   *** THIS the time you WANT ***|
+|                                                                                   |
++-----------------------------------------------------------------------------------+
 
 ```
 You have the option to request a specific timezone to which the date is translated
 in addition to the default ones. Just enter it with the `-o` flag 
+
+You can also add more timezones-to by adding timezone and a comment in
+`listzones.asc`. See current example.
