@@ -23,9 +23,10 @@ translates_to = {"CET": "Central European Time",
 # Optional, load timezones from config file
 if os.path.isfile("listzones.asc"):
     with open("listzones.asc") as f:
-            for line in f:
-                (k, v) = line.split(":")
-                translates_to[k] = v
+        mylist = f.read().splitlines() # otherwise uses newline
+        for line in mylist:
+            (k, v) = line.split(":")
+            translates_to[k] = v
 
 
 class TimezoneChooser:
