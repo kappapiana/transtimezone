@@ -10,7 +10,9 @@ import argparse
 import re
 import os
 
-script_directory = script_dir = os.path.abspath( os.path.dirname( __file__ ) )
+# some variables used in the script
+script_dir = os.path.abspath( os.path.dirname( __file__ ) )
+timezone_file = str(script_dir + "/listzones.asc")
 
 # Define the most relevant timezones
 translates_to = {"CET": "Central European Time",
@@ -21,8 +23,8 @@ translates_to = {"CET": "Central European Time",
                  "Europe/London": "London time, (GMT or BST)"}
  
 # Optional, load timezones from config file
-if os.path.isfile("listzones.asc"):
-    with open("listzones.asc") as f:
+if os.path.isfile(timezone_file):
+    with open(timezone_file) as f:
         mylist = f.read().splitlines() # otherwise uses newline
         for line in mylist:
             (k, v) = line.split(":")
