@@ -27,8 +27,9 @@ if os.path.isfile(timezone_file):
     with open(timezone_file) as f:
         mylist = f.read().splitlines() # otherwise uses newline
         for line in mylist:
-            (k, v) = line.split(":")
-            translates_to[k] = v
+            if not (line.startswith("#") or line == ""): #allow comments and blank lines
+                (k, v) = line.split(":")
+                translates_to[k] = v
 
 
 class TimezoneChooser:
