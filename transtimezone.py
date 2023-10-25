@@ -5,8 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from datetime import datetime 
-from pytz import common_timezones
+# from pytz import common_timezones
 from pytz import timezone
+from pytz import all_timezones
 import argparse
 import re
 import os
@@ -103,13 +104,13 @@ def parseTimezone(input_tz):
     return tz
 
 def regmatch(input):
-    ''' searches for a partial match in the file of
-    cities, timezones and proposes the ones relevant'''
+    ''' searches for a partial match in the list of pytz.timezone
+    and proposes the ones relevant'''
 
     pattern = r'.*'+input+'.*'
     results = []
     
-    for i in common_timezones:
+    for i in all_timezones:
         match = re.findall(pattern, i, re.IGNORECASE)
         if match :
             results.append(i)
