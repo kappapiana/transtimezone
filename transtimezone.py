@@ -16,7 +16,7 @@ import os
 script_dir = os.path.abspath( os.path.dirname( __file__ ) )
 timezone_file = str(script_dir + "/listzones.asc")
 
-# Define the most relevant timezones
+# Define the most relevant timezones to us, hardcoded
 translates_to = {"CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
@@ -67,10 +67,14 @@ class DateExtractor:
         return utc_date 
         
 def asker():
-    count = 0 # We need a counter
+    """the function that asks for timezones and proposes to select from a match"""
+
+    count = 0 
     while True: # Cycle until counter is met
         try:
-            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+            input_tz = input("\nenter the timezone, if unsure, " 
+                             "\nleave blank, we\'ll use UTC after three times :> "
+                             )
             tz = timezone(input_tz)
             return tz
             break
