@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from datetime import datetime 
+from pytz import common_timezones
 from pytz import timezone
 import argparse
 import re
@@ -107,15 +108,12 @@ def regmatch(input):
 
     pattern = r'.*'+input+'.*'
     results = []
-    timezones_file = script_dir + "/tz.asc"
-
-    with open(timezones_file) as f: 
-        find = re.findall(pattern, f.read(), re.IGNORECASE)
     
-    for i in find:
-        if i != "" :
+    for i in common_timezones:
+        match = re.findall(pattern, i, re.IGNORECASE)
+        if match :
             results.append(i)
-
+                        
     return results
     
 def parsedate(get_date, get_time="00:00"):
