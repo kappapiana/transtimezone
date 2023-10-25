@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from datetime import datetime 
+# from pytz import common_timezones
 from pytz import timezone
+from pytz import all_timezones
 import argparse
 import re
 import os
@@ -14,7 +16,7 @@ import os
 script_dir = os.path.abspath( os.path.dirname( __file__ ) )
 timezone_file = str(script_dir + "/listzones.asc")
 
-# Define the most relevant timezones
+# Define the most relevant timezones to us, hardcoded
 translates_to = {"CET": "Central European Time",
                  "America/New_York": "New York Time",
                  "America/Los_Angeles": "Los Angeles Time",
@@ -65,10 +67,14 @@ class DateExtractor:
         return utc_date 
         
 def asker():
-    count = 0 # We need a counter
+    """the function that asks for timezones and proposes to select from a match"""
+
+    count = 0 
     while True: # Cycle until counter is met
         try:
-            input_tz = input('\nenter the timezone, if unsure, leave blank, we\'ll use UTC after three times :> ')
+            input_tz = input("\nenter the timezone, if unsure, " 
+                             "\nleave blank, we\'ll use UTC after three times :> "
+                             )
             tz = timezone(input_tz)
             return tz
             break
@@ -102,20 +108,17 @@ def parseTimezone(input_tz):
     return tz
 
 def regmatch(input):
-    ''' searches for a partial match in the file of
-    cities, timezones and proposes the ones relevant'''
+    ''' searches for a partial match in the list of pytz.timezone
+    and proposes the ones relevant'''
 
     pattern = r'.*'+input+'.*'
     results = []
-    timezones_file = script_dir + "/tz.asc"
-
-    with open(timezones_file) as f: 
-        find = re.findall(pattern, f.read(), re.IGNORECASE)
     
-    for i in find:
-        if i != "" :
+    for i in all_timezones:
+        match = re.findall(pattern, i, re.IGNORECASE)
+        if match :
             results.append(i)
-
+                        
     return results
     
 def parsedate(get_date, get_time="00:00"):
