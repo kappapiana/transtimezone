@@ -233,7 +233,7 @@ def translate_everything(from_date, tz_maxlen, timetrue_maxlen, timename_maxlen,
 
     for tz, timename in list_timezones.dictionary.items():
         translated_to = from_date.astimezone(timezone(tz))
-        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        time_true = translated_to.strftime("%Y-%m-%d %H:%M %Z ")
         list_results.append([tz, time_true, timename])
 
         tz_maxlen.maxlength(len(tz))
