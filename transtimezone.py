@@ -254,12 +254,16 @@ def create_output(args, from_date):
                                         timename_maxlen, args
                                         )
     
-    total_space = tz_maxlen.len_part + timetrue_maxlen.len_part + timename_maxlen.len_part + 2
-    half_space = int(total_space / 2)
+    total_space = int(tz_maxlen.len_part + timetrue_maxlen.len_part + timename_maxlen.len_part + 2)
+    half_space = int(total_space / 2 - 2)
+    other_space = int(total_space - half_space - 4)
+
+    print(f"{total_space - other_space - half_space}")
+
 
 # The initial decoration
 #  
-    print(f"+{'-' * half_space}Times{'-' * half_space}+")
+    print(f"+{'-' * half_space}Times--{'-' * other_space}+")
     print(
             f"| {'Timezone:':{tz_maxlen.len_part + 1}} {'TIME:':<{timetrue_maxlen.len_part + 1}}"
             f"{'Comment:' :<{timename_maxlen.len_part}} |"
