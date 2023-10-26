@@ -214,26 +214,12 @@ def find_from_date(args):
             # create_list()
     return from_date
 
-def translate_everything(from_date, tz_maxlen, timetrue_maxlen, timename_maxlen):
+def translate_everything(from_date, tz_maxlen, timetrue_maxlen, timename_maxlen, args):
 
     list_results = []
     # instantiate class
     list_timezones = TimezoneChooser()
-
-    for tz, timename in list_timezones.dictionary.items():
-        translated_to = from_date.astimezone(timezone(tz))
-        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
-        list_results.append([tz, timename, time_true])
-
-        tz_maxlen.maxlength(len(tz))
-        timetrue_maxlen.maxlength(len(time_true))
-        timename_maxlen.maxlength(len(timename))
-
-    return list_results
-
-def create_output(args, from_date):    
-    ''' this is actually the bit that calculates and outputs times'''
-
+    
     if args.tozone:
         """Check if there is a desired to-time and adds it
         to dictionary"""
@@ -245,11 +231,28 @@ def create_output(args, from_date):
         
         list_timezones.addEntry(timezone_to, "*** THIS the time you WANT ***")
 
+    for tz, timename in list_timezones.dictionary.items():
+        translated_to = from_date.astimezone(timezone(tz))
+        time_true = translated_to.strftime("%Y:%m:%d %H:%M:%S %Z ")
+        list_results.append([tz, time_true, timename])
+
+        tz_maxlen.maxlength(len(tz))
+        timetrue_maxlen.maxlength(len(time_true))
+        timename_maxlen.maxlength(len(timename))
+
+    return list_results
+
+def create_output(args, from_date):    
+    ''' this is actually the bit that calculates and outputs times'''
+
     tz_maxlen = OutLen()
     timetrue_maxlen = OutLen()
     timename_maxlen = OutLen()
 
-    list_results = translate_everything(from_date, tz_maxlen, timetrue_maxlen, timename_maxlen)
+    list_results = translate_everything(
+                                        from_date, tz_maxlen, timetrue_maxlen, \
+                                        timename_maxlen, args
+                                        )
     
     total_space = tz_maxlen.len_part + timetrue_maxlen.len_part + timename_maxlen.len_part + 2
     half_space = int(total_space / 2)
