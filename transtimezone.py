@@ -274,10 +274,7 @@ def create_output(args, from_date):
 # and print out
  
     for i in list_results:
-        for a in i:
-            tz = i[0]
-            time_true = i[1]
-            timename = i[2] 
+        tz, time_true, timename = i
         print(
             f"| {tz + ':':{tz_maxlen.len_part + 1}} {time_true:<{timetrue_maxlen.len_part + 1}}"
             f"{timename :<{timename_maxlen.len_part}} |"
