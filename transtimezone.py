@@ -258,9 +258,6 @@ def create_output(args, from_date):
     half_space = int(total_space / 2 - 2)
     other_space = int(total_space - half_space - 4)
 
-    print(f"{total_space - other_space - half_space}")
-
-
 # The initial decoration
 #  
     print(f"+{'-' * half_space}Times--{'-' * other_space}+")
