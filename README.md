@@ -27,16 +27,13 @@ If you just want to know what time it is in different timezones, just go for
 ./transtimezone.py 2022-10-28 10:00
 ```
 
-You can enter the date directly in the CLI, using the `YYYY-MM-DD` convention (as
-you always should):
+if you just enter the script without anything,
 
 ```shell
 $ ./transtimezone.py
 ```
 
-And it will take the system date 
-
-It will ask the timezone.
+it will take the system date and the current timezone.
 
 Using the `-t` or `--timezone` flag, you can specify the timezone right from the
 start:
@@ -51,7 +48,8 @@ anything when prompted: the script will use the local timezone as obtained from
 the system.
 
 If you omit any parameter, the program will ask to enter the date and time
-string. Remember that it must be entered in the ISO format `YYYY-MM-DD HH:MM`.
+string. Remember that it is supposed to be entered in the ISO format `YYYY-MM-DD
+HH:MM`. But the script is now less picky and might accept other formats.
 
 At the end, you will have a list of times
 

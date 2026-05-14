@@ -84,12 +84,15 @@ def asker():
     
     while count < max_attempts:
         try:
-            input_tz = input("\nEnter timezone (or leave blank for UTC): > ").strip()
+            # Detect user's local timezone for prompt suggestion
+            local_tz = detect_local_timezone()
             
-            # If user provides empty input, use UTC
+            input_tz = input(f"\nEnter timezone (or leave blank for {local_tz}): > ").strip()
+            
+            # If user provides empty input, use detected local timezone
             if not input_tz:
-                print("Using UTC as default")
-                return timezone('UTC')
+                print(f"Using {local_tz} as default")
+                return timezone(local_tz)
             
             # Try exact match first
             try:
@@ -522,9 +525,75 @@ def input_parser():
 
     return input_args
 
+def detect_local_timezone():
+    """Detect system's local timezone using multiple methods.
+    
+    Tries in order:
+    1. /etc/localtime symlink on Unix systems
+    2. /etc/timezone file (Linux)
+    3. TZ environment variable
+    4. Fallback to UTC
+    """
+    import os
+    import platform
+    
+    # Method 1: Check /etc/localtime symlink path
+    if os.path.exists('/etc/localtime') and os.path.islink('/etc/localtime'):
+        link_target = os.readlink('/etc/localtime')
+        if 'zoneinfo' in link_target:
+            parts = link_target.split('zoneinfo/')
+            if len(parts) > 1:
+                return parts[1]
+    
+    # Method 2: Check /etc/timezone file (Linux standard)
+    if os.path.exists('/etc/timezone'):
+        with open('/etc/timezone', 'r') as f:
+            tz = f.read().strip()
+            try:
+                timezone(tz)  # Verify it's valid
+                return tz
+            except UnknownTimeZoneError:
+                pass
+    
+    # Method 3: Check TZ environment variable
+    tz_env = os.environ.get('TZ')
+    if tz_env:
+        try:
+            timezone(tz_env)  # Verify it's valid
+            return tz_env
+        except UnknownTimeZoneError:
+            pass
+    
+    # Method 4: Try platform-specific detection for Mac OS X
+    if platform.system() == 'Darwin':
+        try:
+            import subprocess
+            result = subprocess.run(
+                ['systemsetup', '-getlocaltimezone'],
+                capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0:
+                parts = result.stdout.strip().split(':')
+                if len(parts) >= 2:
+                    tz_name = ':'.join(parts[1:]).strip()
+                    try:
+                        timezone(tz_name)
+                        return tz_name
+                    except UnknownTimeZoneError:
+                        pass
+        except Exception:
+            pass
+    
+    # Ultimate fallback: UTC with warning
+    print("Warning: Could not detect local timezone, using UTC as default")
+    return "UTC"
+
 def find_from_date(args):
     '''This finds the date from which the computation is made
     '''
+    
+    # Detect and use local timezone if no explicit one provided
+    tz_local = detect_local_timezone()
     
     # Parse timezone first (always needed for DateExtractor)
     tz = None
