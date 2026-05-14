@@ -6,7 +6,7 @@
 
 from datetime import datetime 
 # from pytz import common_timezones
-from pytz import timezone
+from pytz import timezone, UnknownTimeZoneError
 from pytz import all_timezones
 import argparse
 import re
@@ -77,48 +77,130 @@ class OutLen:
             self.len_part = length
         
 def asker():
-    """the function that asks for timezones and proposes to select from a match"""
+    """Function that asks for timezones and proposes fuzzy matches."""
 
-    count = 0 
-    while True: # Cycle until counter is met
-        try:
-            input_tz = input("\nenter the timezone, if unsure, " 
-                             "\nleave blank, we\'ll use UTC after three times :> "
-                             )
-            tz = timezone(input_tz)
-            return tz
-            break
-        except:
-            if count < 2 : # Ask Three Times then quit.
-                list_matches = regmatch(input_tz)
-                for i in list_matches[0:15]:
-                    print(i)
-
-                print(
-                    f"\nYou have written \"{input_tz}\", do you mean one of the following "
-                    "(first 15 matches)?")
-                
-                # 
-                count = count + 1
-            else:
-                tz = timezone("UTC")
-                return tz
-                break
-
-def parseTimezone(input_tz):
-    """checks if timezone has been correctly input, if not
-    it asks for timezone via asker()function"""
- 
-    try: 
-        tz = timezone(input_tz)
-    except: 
-        print(f"{input_tz} is not valid")
-        tz = (asker())
+    count = 0
+    max_attempts = 3
     
-    return tz
+    while count < max_attempts:
+        try:
+            input_tz = input("\nEnter timezone (or leave blank for UTC): > ").strip()
+            
+            # If user provides empty input, use UTC
+            if not input_tz:
+                print("Using UTC as default")
+                return timezone('UTC')
+            
+            # Try exact match first
+            try:
+                return timezone(input_tz)
+            except:
+                pass
+            
+            # No exact match, fuzzy search for alternatives
+            matches = fuzzy_timezone_match(input_tz)
+            
+            if matches:
+                print(f"\nNo exact match for '{input_tz}'. Did you mean one of these?")
+                print("Showing top 10 suggestions:\n")
+                
+                display_names = {}
+                for tz in all_timezones:
+                    if tz.lower() in [m.lower() for m in matches]:
+                        name_parts = tz.split('/')[-1].replace('_', ' ')
+                        display_names[tz] = name_parts
+                
+                for idx, tz in enumerate(matches, 1):
+                    print(f"  {idx}. {tz} ({display_names.get(tz, tz).title()})" if tz in display_names else f"  {idx}. {tz}")
+                
+                # Ask user to select from suggestions
+                while True:
+                    selection = input(f"\nEnter number (1-{len(matches)}) or try again: ").strip()
+                    try:
+                        sel_idx = int(selection) - 1
+                        if 0 <= sel_idx < len(matches):
+                            return timezone(matches[sel_idx])
+                        else:
+                            print(f"Please enter a number between 1 and {len(matches)}")
+                    except ValueError:
+                        # User wants to retry their input
+                        break
+            
+            print(f"\nCould not find timezone matching '{input_tz}'")
+            count += 1
+            if count < max_attempts:
+                print(f"Attempt {count} of {max_attempts}\n")
+        
+        except KeyboardInterrupt:
+            print("\nCancelling... Using UTC")
+            return timezone('UTC')
+    
+    # If user failed all attempts, default to UTC with message
+    print(f"\nUnable to parse timezone after {max_attempts} attempts. Using UTC.")
+    return timezone('UTC')
+
+def parseTimezone(input_tz, allow_fuzzy=True):
+    """Parse timezone with optional fuzzy matching.
+    
+    Args:
+        input_tz: Timezone string or identifier
+        allow_fuzzy: If True, attempt fuzzy matching on failure
+    
+    Returns:
+        pytz timezone object
+    
+    Behaviors:
+        - Exact match returns immediately
+        - Fuzzy matching searches by city/region name and common abbreviations
+        - Provides helpful output when no match found
+    """
+    if not input_tz:
+        return timezone('UTC')
+    
+    # Try exact match first
+    try:
+        return timezone(input_tz)
+    except UnknownTimeZoneError:
+        pass
+    
+    # Attempt fuzzy matching if enabled
+    if allow_fuzzy:
+        matches = fuzzy_timezone_match(input_tz)
+        
+        if len(matches) == 1:
+            print(f"Using best match for '{input_tz}': {matches[0]}")
+            return timezone(matches[0])
+        elif len(matches) > 1:
+            # Multiple matches - list them and ask user to select
+            print(f"\nMultiple matches for '{input_tz}', please choose one:")
+            for idx, tz in enumerate(matches, 1):
+                print(f"  {idx}. {tz}")
+            
+            while True:
+                try:
+                    selection = input(f"\nEnter number (1-{len(matches)}): ").strip()
+                    sel_idx = int(selection) - 1
+                    if 0 <= sel_idx < len(matches):
+                        return timezone(matches[sel_idx])
+                    else:
+                        print(f"Please enter a number between 1 and {len(matches)}")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+    
+    # No match found
+    matches = fuzzy_timezone_match(input_tz)
+    
+    if not matches:
+        raise ValueError(f"No matching timezone found for '{input_tz}' after fuzzy search")
+    
+    print(f"\nNo exact match for '{input_tz}'. Closest suggestions:")
+    for idx, tz in enumerate(matches[:5], 1):
+        print(f"  {idx}. {tz}")
+    
+    raise ValueError(f"'{input_tz}' is not a valid timezone identifier")
 
 def regmatch(input):
-    ''' searches for a partial match in the list of pytz.timezone
+    '''Searches for a partial match in the list of pytz.timezone
     and proposes the ones relevant'''
 
     pattern = r'.*'+input+'.*'
@@ -130,40 +212,298 @@ def regmatch(input):
             results.append(i)
                         
     return results
+
+
+def fuzzy_timezone_match(search_text):
+    """Fuzzy match timezone search text against pytz timezones.
     
-def parsedate(get_date, get_time="00:00"):
-        """ parses the provided date and transforms it to date elements
-        returns a datetime object (todo) """
-
-        year, month, day = [int(element) for element in get_date.split('-')]
-        hour, minutes = [int(element) for element in get_time.split(':')]
-
-        return datetime(year, month, day, hour, minutes)
+    Handles: partial matches, case-insensitivity, common abbreviations, 
+             city names extracted from timezone IDs.
+    
+    Args:
+        search_text: User's timezone input (e.g., "new york", "nyc", "sydney")
+    
+    Returns:
+        List of best matching timezone identifiers, ranked by relevance
+    """
+    if not search_text:
+        return []
+    
+    search_lower = search_text.lower().strip()
+    results = {}
+    
+    # Build a ranking score for each timezone
+    for tz in all_timezones:
+        name_parts = tz.split('/')  # e.g., ['America', 'New_York']
+        
+        # Score components:
+        base_score = 0
+        
+        # Exact substring match (case-insensitive) - highest priority
+        if search_lower in tz.lower():
+            base_score += 100
+        
+        # Match against the last part of timezone (city/region name)
+        for part in reversed(name_parts):
+            if search_lower == part.lower():
+                base_score += 100
+            elif search_lower in part.lower():
+                base_score += 50
+        
+        # Handle common abbreviations and slang
+        abbr_map = {
+            'nyc': ['america/new_york', 'us/eastern'],
+            'ny': ['america/new_york'],
+            'la': ['america/los_angeles', 'pacific/chatham'],
+            'sf': ['america/los_angeles'],
+            'sydney': ['australia/sydney'],
+            'london': ['europe/london'],
+            'tokyo': ['asia/tokyo'],
+            'paris': ['europe/paris'],
+            'berlin': ['europe/berlin'],
+            'moscow': ['europe/moscow'],
+            'dubai': ['asia/dubai'],
+            'singapore': ['asia/singapore'],
+            'hongkong': [' asia/hong_kong', 'asia/macau'],
+            'hk': ['asia/hong_kong'],
+            'abeja': ['europe/london'],
+            'cet': ['utc+1', 'utc-2'],
+            'est': ['utc-5', 'america/new_york', 'america/toronto'],
+            'pst': ['utc-8', 'america/los_angeles'],
+            'pacific time': ['america/los_angeles'],
+            'california': ['america/los_angeles'],
+        }
+        
+        if search_lower in abbr_map:
+            for mapped_tz in abbr_map[search_lower]:
+                if mapped_tz and mapped_tz.strip():  # Only non-empty entries
+                    mapped_tz_stripped = mapped_tz.strip().lower()
+                    if mapped_tz_stripped == tz.lower():
+                        base_score += 90
+                        
+        # Additional heuristic for "LA" specifically targeting Los Angeles
+        if search_lower == 'la':
+            if 'los_angeles' in tz.lower():
+                base_score += 150
+        
+        # Fuzzy matching using character overlap
+        tz_display = name_parts[-1].replace('_', ' ').lower()
+        search_words = set(search_lower.split())
+        tz_words = set(tz_display.split())
+        
+        if search_words & tz_words:  # Has common words
+            base_score += 20
+        
+        # Normalize underscores and spaces for matching
+        tz_normalized = tz.lower().replace('_', ' ')
+        if ' '.join(search_lower.split()) in tz_normalized:
+            base_score += 30
+        
+        # Exact match on city name (case-sensitive)
+        if any(search_text == part for part in name_parts):
+            base_score += 150
+        
+        if base_score > 0:
+            results[tz] = base_score
+    
+    # Sort by score descending
+    sorted_results = sorted(results.items(), key=lambda x: x[1], reverse=True)
+    
+    # Limit to top 10 results
+    return [tz for tz, _ in sorted_results[:15]]
+    
+def parse_datetime_flexible(date_input, time_input=None):
+    """Parse date/time with multiple format support.
+    
+    Accepts formats:
+    - "HH:MM" or "H:MM" → uses current date
+    - "HH:MM AM/PM" → uses current date 
+    - YYYY-MM-DD HH:MM (ISO format)
+    - MM/DD/YYYY HH:MM or MM/DD/YYYY  
+    - DD Mon YYYY HH:MM with AM/PM
+    
+    Handles: single-digit hours, AM/PM, date/time only input
+    """
+    combined_input = None
+    
+    # Combine if needed
+    if time_input and ' at ' not in str(date_input).lower():
+        combined_input = f"{date_input} {time_input}"
+    
+    # Try parsing the combined input first (if provided)
+    if combined_input:
+        try:
+            return parse_datetime_flexible(combined_input, None)
+        except ValueError:
+            pass
+    
+    date_str = str(date_input).strip()
+    
+    # Handle "H AM/PM" or "H PM" style format (e.g., "9am", "3pm")
+    am_pm_pattern = r'^(\d{1,2})\s*(am|pm)$'
+    ampm_match = re.match(am_pm_pattern, date_str, re.IGNORECASE)
+    if ampm_match:
+        try:
+            hour = int(ampm_match.group(1))
+            ampm_lower = ampm_match.group(2).lower()
+            
+            # Normalize to lowercase for comparison (am or pm)
+            if ampm_lower.startswith('p'):
+                if hour != 12:
+                    hour += 12
+            elif ampm_lower.startswith('a'):
+                if hour == 12:
+                    hour = 0
+            
+            now = datetime.now()
+            return now.replace(hour=hour, minute=0, second=0, microsecond=0)
+        except (ValueError, TypeError):
+            pass
+    
+    # Handle HH:MM or H:MM format with optional AM/PM
+    time_pattern = r'^(\d{1,2}):?(\d{2})\s*(am|pm)?$'
+    simple_match = re.match(time_pattern, date_str, re.IGNORECASE)
+    
+    if simple_match:
+        try:
+            hour = int(simple_match.group(1))
+            minute = int(simple_match.group(2)) if simple_match.group(2) else 0
+            
+            ampm_part = simple_match.group(3)
+            if ampm_part:
+                ampm_lower = ampm_part.lower()
+                # Normalize to lowercase for comparison (am or pm)
+                if ampm_lower.startswith('p'):
+                    if hour != 12:
+                        hour += 12
+                elif ampm_lower.startswith('a'):
+                    if hour == 12:
+                        hour = 0
+            
+            now = datetime.now()
+            return now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        except (ValueError, TypeError):
+            pass
+    
+    formats_to_try = [
+        ("%Y-%m-%d %H:%M", "ISO format (YYYY-MM-DD HH:MM)"),
+        ("%Y-%m-%d %H:%M:%S", "ISO with seconds"),
+        ("%Y-%m-%d", "Date only (defaults to 00:00)"),
+        ("%m/%d/%Y %H:%M", "US format (MM/DD/YYYY HH:MM)"),
+        ("%m/%d/%Y", "US date only"),
+        ("%d %b %Y %H:%M", "European (DD Mon YYYY HH:MM)"),
+        ("%d %b %Y", "European date only"),
+    ]
+    
+    for fmt, desc in formats_to_try:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    
+    # Try AM/PM formats with case variations and "at" keyword
+    am_pm_formats = [
+        "%b %d, %Y at %-I:%M%p",
+        "%b %d, %Y %-I:%M%p",
+        "%b %d, %Y at %-I%M%p",
+        "%b %d, %Y %-I%M%p",
+    ]
+    
+    for fmt in am_pm_formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    
+    # Try flexible parsing for AM/PM variants like "3pm", "3:00pm"
+    am_pm_pattern = r'.{0,1}\s*(\d{1,2}):?(\d{2})?\s*([ap]m)'
+    am_match = re.search(am_pm_pattern, date_str, re.IGNORECASE)
+    if am_match:
+        hour_part = date_str.replace("at", "").strip()
+        try:
+            hour, minute = am_match.group(1), am_match.group(2)
+            
+            # Extract the rest of the date before the time
+            before_time = hour_part[:am_match.start()]
+            after_time = hour_part[am_match.end():]
+            
+            for fmt in ["%b %d, %Y", "%Y-%m-%d", "%m/%d/%Y"]:
+                try:
+                    base_dt = datetime.strptime(before_time.strip(), fmt)
+                    # Normalize to 24-hour format
+                    am_or_pm = am_match.group(3).lower()[:1]
+                    hour_int = int(hour_part.lstrip(re.search(r'\.*\s*(\d+)\s*\...', before_time).group().split()[0]) if re.search(r'\d+', before_time) else hour or 12)
+                    hour_int = int(am_match.group(1)) if am_match.group(1) else 12
+                    
+                    if am_or_pm == 'p' and hour_int != 12:
+                        hour_int += 12
+                    elif am_or_pm == 'a' and hour_int == 12:
+                        hour_int = 0
+                    
+                    return base_dt.replace(hour=hour_int, minute=int(minute or 0))
+                except ValueError:
+                    continue
+        
+        except (AttributeError, TypeError):
+            pass
+    
+    # Try parsing "3pm" at end of string
+    end_am_pm_match = re.match(r'(.+?)\s*(\d{1,2}):?(\d{2})?\s*([ap]m)\s*$', date_str, re.IGNORECASE)
+    if end_am_pm_match:
+        base_str, hour, minute, ampm = end_am_pm_match.groups()
+        try:
+            for fmt in ["%b %d, %Y", "%Y-%m-%d", "%m/%d/%Y"]:
+                try:
+                    base_dt = datetime.strptime(base_str.strip(), fmt)
+                    hour_int = int(hour or 12)
+                    if ampm.lower() == 'p' and hour_int != 12:
+                        hour_int += 12
+                    elif ampm.lower() == 'a' and hour_int == 12:
+                        hour_int = 0
+                    return base_dt.replace(hour=hour_int, minute=int(minute or 0))
+                except ValueError:
+                    continue
+        except (ValueError, AttributeError):
+            pass
+    
+    # Try parsing "at 3pm" format within the string
+    at_am_pm_match = re.search(r'\sat\s*(\d{1,2}):?(\d{2})?\s*([ap]m)\s*$', date_str, re.IGNORECASE)
+    if at_am_pm_match:
+        before_time = re.sub(r'\sat\s*\d+:?\d*\s*[ap]m\s*$', '', date_str, flags=re.IGNORECASE).strip()
+        hour, minute, ampm = at_am_pm_match.groups()
+        try:
+            for fmt in ["%b %d, %Y", "%Y-%m-%d", "%m/%d/%Y"]:
+                try:
+                    base_dt = datetime.strptime(before_time, fmt)
+                    hour_int = int(hour or 12)
+                    if ampm.lower() == 'p' and hour_int != 12:
+                        hour_int += 12
+                    elif ampm.lower() == 'a' and hour_int == 12:
+                        hour_int = 0
+                    return base_dt.replace(hour=hour_int, minute=int(minute or 0))
+                except ValueError:
+                    continue
+        except (ValueError, AttributeError):
+            pass
+    
+    raise ValueError(f"Unable to parse date/time from '{date_input}' with time component '{time_input}'. Try formats like '2023-10-28 15:00' or 'Oct 28, 2023 at 3pm'.")
 
 def typedate():
-    """function to enter manually (not from CLI)"""
+    """Function to enter date/time interactively with flexible format support."""
 
-    input_hour = "00:00"  # sets default date in case of no input
+    while True:
+        user_input = input("enter the date/time (e.g., 2023-10-28 15:00, or just 09:00 for today): > ").strip()
 
-    while True:  # goes on until the dummy gets it right
-        date = input('enter the date as YYYY-MM-DD hh:mm :> ').split(' ')
+        if not user_input:
+            print("Using current time")
+            return datetime.now()
 
-        input_day = date[0]
-        if len(date) == 2:  # two elements are expected in the list
-            input_hour = date[1]
-        elif len(date) < 2:
-            print(f"you have entered only {len(date)} "
-                  f"elements\nwe use midnight")
         try:
-            # print(input_day, input_hour)
-            print(f"You have entered {input_day} {input_hour}")
-            input_date = parsedate(input_day, input_hour)
-            break
-        except:
-            print("you have entered a wrong data, see the reference it \
-                   must be YYYY-MM-DD HH:MM")
-
-    return input_date
+            input_date = parse_datetime_flexible(user_input)
+            print(f"You have entered {input_date}")
+            return input_date
+        except ValueError as e:
+            print(f"\nError: {e}\n")
 
 def input_parser():
     '''Parser from commandline'''
@@ -185,33 +525,76 @@ def input_parser():
 def find_from_date(args):
     '''This finds the date from which the computation is made
     '''
-    if args.date is None: # no input for date, use system date as UTC
-        date_system = DateExtractor(datetime.utcnow())
-        date_utc = DateExtractor.pass_dataobject(date_system)
-        string_date = date_utc.strftime("%Y-%m-%d %H:%M %Z - %z")
-        print(f"Entered date is {string_date}")
-        from_date = date_utc
-
-    else:
-        tz = parseTimezone(args.timezone)
-        print(f"Timezone is {tz}")
-        
+    
+    # Parse timezone first (always needed for DateExtractor)
+    tz = None
+    if args.timezone:
         try:
-            date_time_string = (f"{args.date} {args.time}")
-            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", tz)
-            from_date = insert_date.pass_dataobject()
-            # print(tz)
-            # print(from_date.astimezone(tz))
-
-        except:
-            print("You have entered a wrong data, see the reference "
-                "it must be YYYY-MM-DD HH:MM")
+            tz = parseTimezone(args.timezone)
+            print(f"Timezone is {tz}")
+        except ValueError as e:
+            print(f"Warning: {e}")
+    
+    # Check if user provided time-only without date (e.g., just "09:00")
+    is_time_only = args.date and re.match(r'(\d{1,2}):?(\d{2})?\s*(am|pm)?$', args.date, re.IGNORECASE)
+    
+    if args.date is None:
+        # No date provided, use current datetime
+        from_date = datetime.now().replace(second=0, microsecond=0)
+        
+    elif is_time_only:
+        # Time-only input like "09:00" - parse time and use current date
+        now = datetime.now().replace(second=0, microsecond=0)
+        if args.date:
+            time_match = re.match(r'(\d{1,2}):?(\d{2})?\s*(am|pm)?$', args.date, re.IGNORECASE)
+            if time_match:
+                hour = int(time_match.group(1))
+                minute = int(time_match.group(2)) if time_match.group(2) else 0
+                
+                ampm = time_match.group(3)
+                if ampm:
+                    ampm_lower = ampm.lower()
+                    if ampm_lower == 'p' and hour != 12:
+                        hour += 12
+                    elif ampm_lower == 'a' and hour == 12:
+                        hour = 0
+                
+                if 0 <= hour <= 23:
+                    from_date = now.replace(hour=hour, minute=minute)
+                    # Create DateExtractor with timezone if provided
+                    if tz:
+                        insert_date = DateExtractor(from_date, "%Y-%m-%d %H:%M", tz)
+                        from_date = insert_date.pass_dataobject()
+                else:
+                    from_date = now
+        else:
+            from_date = now
             
-            date_time_string = typedate()
-            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M")
+    else:
+        # Full date input like "2023-10-28" or "2023-10-28 15:00"
+        try:
+            # Check if date already contains time (e.g., "2023-10-28 15:00")
+            if args.time and args.time != "00:00":
+                date_time_string = f"{args.date} {args.time}"
+            else:
+                # Use flexible parser on just the date part
+                from datetime import datetime as dt
+                parsed = parse_datetime_flexible(args.date)
+                insert_date = DateExtractor(parsed, "%Y-%m-%d %H:%M", tz if tz else "UTC")
+                from_date = insert_date.pass_dataobject()
+                return from_date
+            
+            insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", tz if tz else "UTC")
             from_date = insert_date.pass_dataobject()
-            # 
-            # create_list()
+        except:
+            print("You have entered a wrong data format")
+            date_time_string = typedate()
+            if tz:
+                insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", tz)
+            else:
+                insert_date = DateExtractor(date_time_string, "%Y-%m-%d %H:%M", "UTC")
+            from_date = insert_date.pass_dataobject()
+    
     return from_date
 
 def translate_everything(from_date, tz_maxlen, timetrue_maxlen, timename_maxlen, args):
