@@ -6,9 +6,9 @@ SPDX-License-Identifier: CC0-1.0
 
 [![REUSE status](https://api.reuse.software/badge/github.com/kappapiana/transtimezone)](https://api.reuse.software/info/github.com/kappapiana/transtimezone)
 
-# transtimezone
+# Transtimezone
 
-Quick translate times between timezones
+Quick translate times between timezones. Enter times in flexible formats like `2023-10-28 15:00`, `10/28/2023`, or just `new york` for smart timezone matching.
 
 The basic idea is to have a quick way to find out what time it is in different
 places of the world when announcing, for instance, a virtual meeting. Many
