@@ -52,7 +52,9 @@ class DateExtractor:
         self.utc = timezone("UTC")
         if tz == "":
             self.tz_obj = timezone("UTC")
-        else: 
+        elif isinstance(tz, str):
+            self.tz_obj = timezone(tz)
+        else:
             self.tz_obj = tz
         if (type(self.date_time_string)) is str :
             # self.date_obj = datetime.strptime(self.date_time_string, format)
